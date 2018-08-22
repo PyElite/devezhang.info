@@ -9,7 +9,7 @@ from flask_wtf import CSRFProtect
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
-from info import app, db
+from info import create_app, db
 
 """
 大致框架：
@@ -61,6 +61,8 @@ db = SQLAlchemy(app)
 redis_store = redis.StrictRedis(host=Config.REDIS_HOST, port=Config.REDIS_PORT)
 """
 
+# 通过传入配置参数初始化app对象
+app = create_app('development')
 # 一切配置已完毕，使用Flask-Script与数据库迁移扩展
 manager = Manager(app)  # 实例Manager管理对象
 
