@@ -6,6 +6,9 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 """
+import logging
+
+from flask import current_app
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
@@ -73,6 +76,15 @@ manager.add_command('db', MigrateCommand)  # 迁移命令添加到manager中方�
 
 @app.route('/')
 def index():
+    # 测试打印log日志
+    logging.debug('测试debug')
+    logging.warning('测试warning')
+    logging.error('测试error')
+    logging.fatal('测试fatal')
+    # flask中输出
+    current_app.logger.error('测试error')
+
+
     return 'hello'
 
 
