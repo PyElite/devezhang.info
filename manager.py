@@ -1,6 +1,6 @@
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from info import create_app, db
+from info import create_app, db, models  # 只需要导入模型类就可完成数据库迁移
 
 
 # manager是程序启动的入口，只关心启动相关的内容，不关心集体该如何创建视图函数的逻辑
