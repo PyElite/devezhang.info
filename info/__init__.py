@@ -40,7 +40,7 @@ def create_app(config_name):
     # 配置日志,传入配置名字，根据名字获取对应的配置日志的等级
     setup_log(config_name)
     # 创建flask对象
-    app = Flask(__name__)  # 默认参数static_path = ./static??!!!
+    app = Flask(__name__)  # 默认参数static_path = ./static!!!
     # 从对象中添加配置
     app.config.from_object(config[config_name])
     # 通过app初始化
