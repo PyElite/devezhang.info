@@ -54,9 +54,12 @@ def create_app(config_name):
     # 绑定要设置session的应用对象
     Session(app)
 
-    # 注册蓝图:这个导入称为延迟导入，解决了循环导入
+    # 注册根路由蓝图:这个导入称为延迟导入，解决了循环导入
     from info.modules.index import index_blu
     app.register_blueprint(index_blu)
+    # 注册注册时的蓝图:每个路由都要注册到app中
+    from info.modules.passport import passport_blu
+    app.register_blueprint(passport_blu)
 
     return app
 
