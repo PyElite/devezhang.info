@@ -33,9 +33,17 @@ $(function(){
 
 
 	// 点击输入框，提示文字上移
-	$('.form_group').on('click focusin',function(){
-		$(this).children('.input_tip').animate({'top':-5,'font-size':12},'fast').siblings('input').focus().parent().addClass('hotline');
-	})
+	// $('.form_group').on('click focusin',function(){
+	// 	$(this).children('.input_tip').animate({'top':-5,'font-size':12},'fast').siblings('input').focus().parent().addClass('hotline');
+	// })
+    $('.form_group').on('click',function(){
+        $(this).children('input').focus()
+    })
+
+    $('.form_group input').on('focusin',function(){
+        $(this).siblings('.input_tip').animate({'top':-5,'font-size':12},'fast')
+        $(this).parent().addClass('hotline');
+    })
 
 	// 输入框失去焦点，如果输入框为空，则提示文字下移
 	$('.form_group input').on('blur focusout',function(){
@@ -110,8 +118,33 @@ $(function(){
         }
 
         // 发起登录请求
-    })
+        var params = {
+            'mobile': mobile,
+            'password': password
+        }
+        // 发起登录请求
+        $.ajax({
+            url:'passport/login',
+            type: 'post',
+            data: JSON.stringify(params),
+            contentType: 'application/json',
 
+            // 在header中添加csrf_token随机值
+            headers:{
+                "X-CSRFToken": getCookie('csrf_token')
+            },
+            success:function (resp) {
+                if (resp.errno == '0'){
+                    // 登陆成功
+                    location.reload()
+                }else{
+                    alert(resp.errmsg);
+                    $('#login-password-err').html(resp.errmsg);
+                    $('#login-password-err').show();
+                }
+            }
+        })
+    })
 
     // TODO 注册按钮点击
     $(".register_form_con").submit(function (e) {
@@ -143,7 +176,31 @@ $(function(){
             return;
         }
 
+        var params = {
+            'mobile': mobile,
+            'smscode': smscode,
+            'password': password
+        }
         // 发起注册请求
+        $.ajax({
+            url:'passport/register',
+            type: 'post',
+            data: JSON.stringify(params),
+            contentType: 'application/json',
+            success:function (resp) {
+                if (resp.errno == '0'){
+                    // 注册成功
+                    location.reload()
+                }
+                else {
+                    // 注册失败
+                    alert(resp.errmsg);
+                    $('#register-password-err').html(resp.errmsg)
+                    $('#register-password-err').show()
+                }
+            }
+        })
+
 
     })
 })
@@ -180,6 +237,60 @@ function sendSMSCode() {
     }
 
     // TODO 发送短信验证码
+    var params = {
+        'mobile': mobile,
+        'image_code': imageCode,
+        // 生成图片验证码之后已经对全局变量修改成随机值
+        'image_code_id': imageCodeId,
+    }
+    $.ajax({
+        // 固定格式：请求地址、方式、内容、数据类型、格式
+        url: '/passport/sms_code',
+        method: 'POST',
+        data: JSON.stringify(params),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function (resp) {
+            if (resp.errno == '0'){
+                // 0成功，倒计时60s,设置循环计时器
+                var num = 60;
+                var oTime = setInterval(function () {
+                    if (num == 1){
+                        // 清除计时
+                        clearInterval(oTime);
+                        // 还原获取验证码按钮
+                        $('.get_code').html('获取验证码');
+                        // 恢复点击事件
+                        $('.get_code').attr('onclick', 'sendSMSCode();');
+                    }
+                    else {
+                        num -= 1 ;
+                        $('.get_code').html(num + '秒');
+                    }
+                }, 1000)
+            }
+            else {
+                // 1失败，展示错误信息
+                $('#register-sms-code-err').html(resp.errmsg);
+                $('#register-sms-code-err').show();
+                // 恢复点击事件
+                $('.get_code').attr('onclick', 'sendSMSCode();');
+                // 验证码错误则生成新的验证码
+                if (resp.errno == '4004'){
+                    generateImageCode()
+                }
+            }
+        }
+    })
+}
+
+function logout() {
+        // ajax简写：没有失败函数
+        $.get('/passport/logout', function (resp) {
+            if(resp.errno == '0'){
+                location.reload()
+            }
+        })
 }
 
 // 调用该函数模拟点击左侧按钮
