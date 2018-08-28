@@ -1,7 +1,8 @@
-from flask import render_template, current_app, session, request, jsonify
+from flask import render_template, current_app, session, request, jsonify, g
 
 from info import constants
 from info.models import User, News, Category
+from info.utils.common import user_login_data
 from info.utils.response_code import RET
 from . import index_blu
 
@@ -64,37 +65,37 @@ def news_list():
 
 
 @index_blu.route('/')
+@user_login_data
 def index():
-    # 用户是否登录逻辑：
-    user_id = session.get('user_id', None)
-    user = None
-    # 如果session中有此用户id，则显示登录页面
-    if user_id:
-        try:
-            user = User.query.get(user_id)
-        except Exception as e:
-            current_app.logger.error(e)
+    """主页新闻列表"""
 
-    # 右侧新闻排行逻辑
-    news_list = []  # 分页查询对象列表
+    # 1.查询用户是否登录
+    user = g.user
+    # user_id = session.get('user_id', None)
+    # user = None  # 避免用户未登录时查询模型失败
+    # if user_id:
+    #     # 已经登录则尝试查询用户模型
+    #     try:
+    #         user = User.query.get(user_id)
+    #     except Exception as e:
+    #         current_app.logger.error(e)
+
+    # 2.右侧新闻排行
+    news_list = []
     try:
         news_list = News.query.order_by(News.clicks.desc()).limit(constants.CLICK_RANK_MAX_NEWS)
     except Exception as e:
         current_app.logger.error(e)
-    # 定义一个空列表，存的字典,用户传给模板
+    # 遍历分页查询结果转成字典存入新的列表
     news_dict_li = []
-    # 便利对象列表，将对象的字典添加到这个字典列表中
     for news in news_list:
         news_dict_li.append(news.to_basic_dict())
-
-    # 新闻分类数据逻辑
-
-    # 枚举所有查询对象，遍历之后转成属性字典放进新列表
+    # 3.上方新闻分类
     categories = Category.query.all()
     # 空列表保存分类数据
     categories_dicts = []
+    # 查询所有，遍历后分别将属性转成字典存入新列表
     for category in categories:
-        # 拼接
         categories_dicts.append(category.to_dict())
 
     data = {

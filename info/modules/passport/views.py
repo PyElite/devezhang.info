@@ -2,7 +2,7 @@ import random
 import re
 from datetime import datetime
 
-from flask import request, abort, current_app, make_response, jsonify, session
+from flask import abort, current_app, make_response, jsonify, session, request
 
 from info import redis_store, constants, db
 from info.libs.yuntongxun.sms import CCP
@@ -83,6 +83,7 @@ def send_sms_code():
         return jsonify(errno=RET.DATAERR, errmsg='验证码填写错误')
     # 生成随机码
     sms_code_str = '%06d' % random.randint(0, 999999)
+
     current_app.logger.debug(sms_code_str)
 
     # # 云通讯发送验证码:CCP必须加括号
