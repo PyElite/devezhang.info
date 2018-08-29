@@ -58,7 +58,7 @@ def news_detail(news_id):
     # 遍历评论数据，转成属性字典存入新的列表
     comment_dict_li = []
     for comment in comments:
-        comment_dict_li = comment.to_dict()
+        comment = comment.to_dict()
         comment_dict_li.append(comment)
 
     data = {
