@@ -124,7 +124,7 @@ $(function(){
         }
         // 发起登录请求
         $.ajax({
-            url:'passport/login',
+            url:'/passport/login',
             type: 'post',
             data: JSON.stringify(params),
             contentType: 'application/json',
@@ -183,10 +183,13 @@ $(function(){
         }
         // 发起注册请求
         $.ajax({
-            url:'passport/register',
+            url:'/passport/register',
             type: 'post',
             data: JSON.stringify(params),
             contentType: 'application/json',
+            headers:{
+                "X-CSRFToken": getCookie('csrf_token')
+            },
             success:function (resp) {
                 if (resp.errno == '0'){
                     // 注册成功
@@ -246,10 +249,13 @@ function sendSMSCode() {
     $.ajax({
         // 固定格式：请求地址、方式、内容、数据类型、格式
         url: '/passport/sms_code',
-        method: 'POST',
+        type: 'post',
         data: JSON.stringify(params),
         contentType: 'application/json',
-        dataType: 'json',
+        // dataType: 'json',
+        headers:{
+                "X-CSRFToken": getCookie('csrf_token')
+            },
         success: function (resp) {
             if (resp.errno == '0'){
                 // 0成功，倒计时60s,设置循环计时器

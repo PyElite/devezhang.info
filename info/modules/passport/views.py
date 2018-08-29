@@ -30,7 +30,7 @@ def get_image_code():
         return abort(403)
     # 生成验证码：name是图片名字，text是图片的内容信息
     name, text, image = captcha.generate_captcha()
-    # current_app.logger.debug(text)
+    current_app.logger.debug(text)
 
     try:
         # key,value,max_age；
