@@ -12,14 +12,15 @@
                 <img src={% if data.user.avatar_url %}
                     {{ data.user.avatar_url }}
                 {% else %}
-                    "../../static/news/images/user_pic.png"
+                    {# "../../static/news/images/user_pic.png" #}
+                    "../../static/news/images/person05.jpg"
                 {% endif %} alt="用户图片">
             </div>
 
             <div class="user_center_name">{{ data.user.nick_name }}</div>
 
             <ul class="option_list">
-                <li class="active"><a href="../../static/news/html/user_base_info.html" target="main_frame">基本资料</a></li>
+                <li class="active"><a href="/user/base_info" target="main_frame">基本资料</a></li>
                 <li><a href="../../static/news/html/user_pic_info.html" target="main_frame">头像设置</a></li>
                 <li><a href="../../static/news/html/user_follow.html" target="main_frame">我的关注</a></li>
                 <li><a href="../../static/news/html/user_pass_info.html" target="main_frame">密码修改</a></li>
@@ -30,7 +31,7 @@
         </div>
 
         <div class="user_con fr">
-            <iframe src="../../static/news/html/user_base_info.html" frameborder="0" name="main_frame" class="main_frame" id="main_frame"></iframe>
+            <iframe src="/user/base_info" frameborder="0" name="main_frame" class="main_frame" id="main_frame"></iframe>
         </div>
     </div>
 {% endblock %}
