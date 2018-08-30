@@ -48,33 +48,35 @@
         {% block content_block %}
         {% endblock %}
 
-        <div class="rank_con fr">
-            {% block author_block %}
-            {% endblock %}
+        {% block rank_block %}
+            <div class="rank_con fr">
+                {% block author_block %}
+                {% endblock %}
 
-            <div class="rank_title">
-                <h3>点击排行</h3>
+                <div class="rank_title">
+                    <h3>点击排行</h3>
+                </div>
+
+                <ul class="rank_list">
+                    {% for news in data.news_dict_li %}
+                        <li>
+                            {% if loop.index == 1 %}
+                                <span  class="first"> {{ loop.index }}</span>
+                            {% elif loop.index == 2 %}
+                                <span  class="second"> {{ loop.index }}</span>
+                            {% elif loop.index == 3 %}
+                                <span  class="third"> {{ loop.index }}</span>
+                            {% else %}
+                                <span> {{ loop.index }}</span>
+                            {% endif %}
+                        <a href="#">{{ news.title }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
             </div>
-
-            <ul class="rank_list">
-                {% for news in data.news_dict_li %}
-                    <li>
-                        {% if loop.index == 1 %}
-                            <span  class="first"> {{ loop.index }}</span>
-                        {% elif loop.index == 2 %}
-                            <span  class="second"> {{ loop.index }}</span>
-                        {% elif loop.index == 3 %}
-                            <span  class="third"> {{ loop.index }}</span>
-                        {% else %}
-                            <span> {{ loop.index }}</span>
-                        {% endif %}
-                    <a href="#">{{ news.title }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-
-        </div>
+        {% endblock %}
     </div>
+
     <div class="footer">
         <div class="footer_links">
             <a href="">关于我们</a>
