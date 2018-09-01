@@ -18,15 +18,15 @@ Migrate(app, db)  # 注意顺序!!!!
 manager.add_command('db', MigrateCommand)  # 迁移命令添加到manager中方便从终端完成迁移
 
 
-@manager.option("-u", "-user", dest="user")
+@manager.option("-n", "-name", dest="name")
 @manager.option("-p", "-password", dest="password")
-def createsuperuser(user, password):
+def createsuperuser(name, password):
     """命令行创建超级用户"""
-    if not all([user, password]):
+    if not all([name, password]):
         print("参数不足")
     user = User()
-    user.nick_name = user
-    user.mobile = user
+    user.nick_name = name
+    user.mobile = name
     user.password = password
     user.is_admin = True
     # 提交到数据库

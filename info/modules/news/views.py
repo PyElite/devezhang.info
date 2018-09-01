@@ -279,14 +279,3 @@ def followed_user():
     return jsonify(errno=RET.OK, errmsg="操作成功")
 
 
-
-
-
-
-
-
-
-
-
-
-
