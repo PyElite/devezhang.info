@@ -8,7 +8,7 @@ class Config(object):
     SECRET_KEY = 'td2ZngpuiGIgVJ/NSCvxAw7a7f4LnX2GEQrxom3UGR20T/+mNV6PAEXViYAKcqai'
 
     # mysql相关配置信息
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:mysql@127.0.0.1:3306/web_news'
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:mysql@127.0.0.1:3306/Web_News'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # 开启在每次请求的结束，自动执行一次db.session.commit()
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True

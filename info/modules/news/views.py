@@ -50,11 +50,12 @@ def news_detail(news_id):
     comment_like_ids = []
     if user:
         try:
-            comment_ids = [comment.id for comment in comments]  # 列表生成式获取所有评论id
+            # 1.列表生成式获取当前新闻的所有评论id
+            comment_ids = [comment.id for comment in comments]
             if len(comment_ids) > 0:
-                # 如果当前新闻有评论，查询当前新闻的所有评论的点赞记录
+                # 2.如果当前新闻有评论，查询当前新闻的所有评论的点赞记录
                 comment_likes = CommentLike.query.filter(CommentLike.comment_id.in_(comment_ids), CommentLike.user_id==user.id)
-                # 取出所有点赞记录的id
+                # 3.取出所有点赞记录的id
                 comment_like_ids = [comment_like.comment_id for comment_like in comment_likes]
         except Exception as e:
             current_app.logger.error(e)
@@ -100,7 +101,8 @@ def collect_news():
         return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
 
     try:
-        news_id = int(news_id)  # 尝试转换成整数用于查询
+        # 尝试转换成整数用于查询，防止通过postman提交；前段的验证不可靠，后端还需验证
+        news_id = int(news_id)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
