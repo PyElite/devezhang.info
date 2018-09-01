@@ -100,7 +100,7 @@ def index():
 
     data = {
         # 如果user有值，则用user.to_dict()，否则为None
-        # to_dict()获取user的左右属性,因为ajax使用json传输数据，不能携带对象
+        # to_dict()获取user的属性,因为ajax使用json传输数据，不能携带对象
         "user": user.to_dict() if user else None,
         "news_dict_li": news_dict_li,
         'categories': categories_dicts

@@ -6,7 +6,7 @@ from redis import StrictRedis
 
 from config import config
 import redis
-from flask import Flask
+from flask import Flask, g, render_template
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
@@ -58,6 +58,15 @@ def create_app(config_name):
         # 设置cookie值
         response.set_cookie('csrf_token', csrf_token)
         return response
+
+    from info.utils.common import user_login_data
+
+    @app.errorhandler(404)
+    @user_login_data
+    def page_not_found(x):
+        user = g.user  # 因为data中没有分类数据，所以新闻分类不会展示
+        data = {"user": user.to_dict() if user else None}
+        return render_template("news/404.html", data=data)
 
     # 注册根路由蓝图:这个导入称为延迟导入，解决了循环导入
     from info.modules.index import index_blu
