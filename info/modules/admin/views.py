@@ -1,3 +1,6 @@
+import time
+from datetime import datetime, timedelta
+
 from flask import render_template, request, current_app, jsonify, session, redirect, url_for, g
 
 from info.models import User
@@ -54,3 +57,38 @@ def login():
         # 6.返回成功界面：主页
         return redirect(url_for("admin.index"))  # admin是蓝图的别名
 
+
+@admin_blu.route("user_count")
+def user_count():
+    """用户统计页面"""
+    # 1.查询总人数
+    total_count = 0
+    try:
+        total_count = User.query.filter(User.is_admin == False).count()
+    except Exception as e:
+        current_app.logger.error(e)
+    # 2.查询月新增人数
+    now = time.localtime()  # 获取本地时间
+    mon_count = 0
+    try:
+        mon_begin = "%d-%02d-01" % (now.tm_year, now.tm_mon)
+        mon_begin_date = datetime.strptime(mon_begin, "%Y-%m-%d")
+        mon_count = User.query.filter(User.is_admin == False, User.create_time >= mon_begin_date).count()
+    except Exception as e:
+        current_app.logger.error(e)
+    # 3.查询日新增人数
+    day_count = 0
+    try:
+        day_begin = "%d-%02d-%02d" % (now.tm_year, now.tm_mon, now.tm_mday)
+        day_begin_date = datetime.strptime(day_begin, "%Y-%m-%d")
+        day_count = User.query.filter(User.is_admin == False, User.create_time >= day_begin_date).count()
+    except Exception as e:
+        current_app.logger.error(e)
+
+
+    data = {
+        "total_count": total_count,
+        "mon_count": mon_count,
+        "day_count": day_count,
+    }
+    return render_template("admin/user_count.html", data=data)
