@@ -164,8 +164,9 @@ def user_list():
 @admin_blu.route("news_review")
 def news_review_list():
     """新闻待审核列表"""
-    # 1.列表需要分页，取参：页码
+    # 1.列表需要分页，取参：页码，搜索关键字
     page = request.args.get("page", 1)
+    keywords = request.args.get("keywords", "")  # 默认为空，html添加name="keywords"
     # 2.校参：int
     try:
         page = int(page)
@@ -177,8 +178,13 @@ def news_review_list():
     current_page = 1
     total_page = 1
     try:
-        paginate = News.query.filter(News.status != 0). \
-                                    order_by(News.create_time.desc()). \
+        filters = [News.status != 0]
+        if keywords:
+            # 关键的检索功能实现:标题包含关键字
+            filters.append(News.title.contains(keywords))
+        # 分页查询
+        paginate = News.query.filter(*filters).\
+                                    order_by(News.create_time.desc()).\
                                     paginate(page, constants.ADMIN_NEWS_PAGE_MAX_COUNT, False)
         news = paginate.items
         current_page = paginate.page
@@ -191,7 +197,7 @@ def news_review_list():
         news_list.append(new.to_review_dict())
 
     data = {
-        "users": news_list,
+        "news_list": news_list,
         "current_page": current_page,
         "total_page": total_page
     }
