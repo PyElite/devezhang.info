@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from flask import render_template, request, current_app, jsonify, session, redirect, url_for, g
 
+from info import constants
 from info.models import User
 from info.modules.admin import admin_blu
 from info.utils.common import user_login_data
@@ -68,27 +69,107 @@ def user_count():
     except Exception as e:
         current_app.logger.error(e)
     # 2.查询月新增人数
-    now = time.localtime()  # 获取本地时间
+    #   2.1获取本地目前时间
+    now = time.localtime()
     mon_count = 0
     try:
-        mon_begin = "%d-%02d-01" % (now.tm_year, now.tm_mon)
-        mon_begin_date = datetime.strptime(mon_begin, "%Y-%m-%d")
-        mon_count = User.query.filter(User.is_admin == False, User.create_time >= mon_begin_date).count()
+        mon_begin_date = datetime.strptime("%d-%02d-01" %
+                                           (now.tm_year, now.tm_mon), "%Y-%m-%d")
+        mon_count = User.query.filter(User.is_admin == False,
+                                      User.create_time >= mon_begin_date).count()
     except Exception as e:
         current_app.logger.error(e)
     # 3.查询日新增人数
     day_count = 0
     try:
-        day_begin = "%d-%02d-%02d" % (now.tm_year, now.tm_mon, now.tm_mday)
-        day_begin_date = datetime.strptime(day_begin, "%Y-%m-%d")
-        day_count = User.query.filter(User.is_admin == False, User.create_time >= day_begin_date).count()
+        day_begin_date = datetime.strptime("%d-%02d-%02d" %
+                                           (now.tm_year, now.tm_mon, now.tm_mday), "%Y-%m-%d")
+        day_count = User.query.filter(User.is_admin == False,
+                                      User.create_time >= day_begin_date).count()
     except Exception as e:
         current_app.logger.error(e)
 
+    # 4.折线图数据；  strptime将时间字符串按照一定的格式转成时间对象；
+    #   4.1获取当天凌晨时间。下取：2018:09:02:00:00:00
+    today_date = datetime.strptime("%d-%02d-%02d" %
+                                   (now.tm_year, now.tm_mon, now.tm_mday), "%Y-%m-%d")
+    #   4.2定义空数据用于保存图标需要的信息
+    active_time = []
+    active_count = []
+
+    #   4.3添加数据，再反转
+    for i in range(0, 31):  # timedelta对象代表事件对象之间的时间差
+        # 获得开始时间和结束时间
+        begin_date = today_date - timedelta(days=i)
+        end_date = today_date - timedelta(days=(i-1))
+
+        # 获得今天活跃的用户量
+        count = User.query.filter(User.is_admin == False,
+                                  User.last_login >= begin_date,
+                                  User.last_login <= end_date).count()
+        # 将需要的数据存入列表
+        active_count.append(count)
+        active_time.append(begin_date.strftime("%Y-%m-%d"))  # strftime时间对象转成字符串
+    # 反转展示
+    active_count.reverse()
+    active_time.reverse()
 
     data = {
         "total_count": total_count,
         "mon_count": mon_count,
         "day_count": day_count,
+        "active_time": active_time,
+        "active_count": active_count
     }
     return render_template("admin/user_count.html", data=data)
+
+
+@admin_blu.route("/user_list")
+def user_list():
+    """用户列表展示"""
+    # 1.用户列表需要分页，取参
+    page = request.args.get("page", 1)
+    # 2.校参：int
+    try:
+        page = int(page)
+    except Exception as e:
+        current_app.logger.error(e)
+        page = 1
+    # 3.查询用户并按时间排序后分页
+    users = []
+    current_page = 1
+    total_page = 1
+    try:
+        paginate = User.query.filter(User.is_admin == False).\
+                                    order_by(User.last_login.desc()).\
+                                    paginate(page, constants.ADMIN_USER_PAGE_MAX_COUNT, False)
+        users = paginate.items
+        current_page = paginate.page
+        total_page = paginate.pages
+    except Exception as e:
+        current_app.logger.error(e)
+    # 4.将数据转成字典列表
+    users_list = []
+    for user in users:
+        users_list.append(user.to_admin_dict())
+
+    data = {
+        "users": users_list,
+        "current_page": current_page,
+        "total_page": total_page
+    }
+    return render_template("admin/user_list.html", data=data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
