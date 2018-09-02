@@ -1,9 +1,9 @@
 # 公用工具
+
 from flask import g, session, current_app
 import functools
 
-from info import constants
-from info.models import User, News
+from info.models import User
 
 
 def user_login_data(func):
@@ -23,18 +23,3 @@ def user_login_data(func):
         return func(*args, **kwargs)
     return wrapper
 
-
-# def news_rank_show(func):
-#     @functools.wraps(func)
-#     def wrapper(*args, **kwargs):
-#         news_list = []
-#         try:
-#             news_list = News.query.order_by(News.clicks.desc()).limit(constants.CLICK_RANK_MAX_NEWS)
-#         except Exception as e:
-#             current_app.logger.error(e)
-#         # 遍历分页查询结果转成字典存入新的列表
-#         news_dict_li = []
-#         for news in news_list:
-#             news_dict_li.append(news.to_basic_dict())
-#         g.news_dict_li = news_dict_li
-#     return wrapper

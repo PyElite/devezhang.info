@@ -3,6 +3,7 @@ from flask import render_template, request, current_app, jsonify, session, redir
 from info.models import User
 from info.modules.admin import admin_blu
 from info.utils.common import user_login_data
+from info.utils.response_code import RET
 
 
 @admin_blu.route("/index")
@@ -33,9 +34,9 @@ def login():
         if not all([username, password]):
             # 返回页面
             return render_template("admin/login.html", errmsg="参数不足")
-        # 3.验证查询此用户是否存在
+        # 3.验证查询此管理用户是否存在
         try:
-            user = User.query.filter(User.mobile == username).first()
+            user = User.query.filter(User.mobile == username, User.is_admin == True).first()
         except Exception as e:
             current_app.logger.error(e)
             return render_template("admin/login.html", errmsg="数据查询失败")
@@ -44,24 +45,12 @@ def login():
         # 4.验证密码是否正确
         if not user.check_password(password):
             return render_template("admin/login.html", errmsg="用户名或密码错误")
-        # 5.判断是否是管理员
-        if not user.is_admin:
-            return render_template("admin/login.html", errmsg="用户权限错误")
-        # 6.登陆成功则保存登录状态
+        # 5.登陆成功则保存登录状态
         session["user_id"] = user.id
         session["nick_name"] = user.nick_name
         session["mobile"] = user.mobile
         session["is_admin"] = True
 
-        # 7.返回成功界面：主页
+        # 6.返回成功界面：主页
         return redirect(url_for("admin.index"))  # admin是蓝图的别名
-
-
-
-
-
-
-
-
-
 

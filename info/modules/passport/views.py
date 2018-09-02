@@ -210,7 +210,11 @@ def login():
 
 @passport_blu.route('/logout')
 def logout():
+    """退出登录"""
+    # 1.清除普通用户的session
     session.pop('user_id', None)
     session.pop('mobile', None)
     session.pop('nick_name', None)
+    # 2.清除管理员的session:如果管理员登录后进入了普通界面，退出时需要清除is_admin
+    # session.pop("is_admin", None)
     return jsonify(errno=RET.OK, errmsg='退出成功')
