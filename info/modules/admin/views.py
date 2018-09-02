@@ -204,6 +204,63 @@ def news_review_list():
     return render_template("admin/news_review.html", data=data)
 
 
+@admin_blu.route("/news_review_detail", methods=["GET", "POST"])
+def news_review_detail():
+    """新闻审核详情页"""
+    # 1.GET请求渲染页面
+    if request.method == "GET":
+        # 1.取参：新闻id
+        news_id = request.args.get("news_id")
+        if not news_id:
+            return render_template('admin/news_review_detail.html', data={"errmsg": "未查询到此新闻"})
+        # 2.查询：新闻id
+        news = None
+        try:
+            news = News.query.get(news_id)
+        except Exception as e:
+            current_app.logger.error(e)
+
+        if not news:
+            return render_template('admin/news_review_detail.html', data={"errmsg": "未查询到此新闻"})
+        # 3.返回数据
+        data = {
+            "news": news.to_dict()
+        }
+        return render_template('admin/news_review_detail.html', data=data)
+    else:
+        # 否则POST请求进行审核action
+        # 1.取参：news_id/action
+        news_id = request.json.get("news_id")
+        action = request.json.get("action")
+        # 2.校参：非空/action
+        if not all([news_id, action]):
+            return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+        if action not in ("accept", "reject"):
+            return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+        # 3.查询新闻
+        news = None
+        try:
+            news = News.query.get(news_id)
+        except Exception as e:
+            current_app.logger.error(e)
+
+        if not news:
+            return jsonify(errno=RET.NODATA, errmsg="未查询到数据")
+        # 4.不同action进行不同的审核操作
+        if action == "accept":
+            news.status = 0
+        else:
+            # 否则拒绝通过，获取原因
+            reason = request.json.get("reason")
+            if not reason:
+                return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+            # 将拒绝原因存入数据库，将自动commit
+            news.reason = reason
+            news.status = -1
+
+        return jsonify(errno=RET.OK, errmsg="操作成功")
+
+
 
 
 
