@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from flask import render_template, request, current_app, jsonify, session, redirect, url_for, g
 
 from info import constants
-from info.models import User
+from info.models import User, News
 from info.modules.admin import admin_blu
 from info.utils.common import user_login_data
 from info.utils.response_code import RET
@@ -127,7 +127,7 @@ def user_count():
 @admin_blu.route("/user_list")
 def user_list():
     """用户列表展示"""
-    # 1.用户列表需要分页，取参
+    # 1.用户列表需要分页，取参：页码
     page = request.args.get("page", 1)
     # 2.校参：int
     try:
@@ -135,7 +135,7 @@ def user_list():
     except Exception as e:
         current_app.logger.error(e)
         page = 1
-    # 3.查询用户并按时间排序后分页
+    # 3.查询用户并按最后登录时间排序后分页
     users = []
     current_page = 1
     total_page = 1
@@ -161,8 +161,41 @@ def user_list():
     return render_template("admin/user_list.html", data=data)
 
 
+@admin_blu.route("news_review")
+def news_review_list():
+    """新闻待审核列表"""
+    # 1.列表需要分页，取参：页码
+    page = request.args.get("page", 1)
+    # 2.校参：int
+    try:
+        page = int(page)
+    except Exception as e:
+        current_app.logger.error(e)
+        page = 1
+    # 3.查询未审核的新闻并按创建时间排序后分页
+    news = []
+    current_page = 1
+    total_page = 1
+    try:
+        paginate = News.query.filter(News.status != 0). \
+                                    order_by(News.create_time.desc()). \
+                                    paginate(page, constants.ADMIN_NEWS_PAGE_MAX_COUNT, False)
+        news = paginate.items
+        current_page = paginate.page
+        total_page = paginate.pages
+    except Exception as e:
+        current_app.logger.error(e)
+    # 4.将数据转成字典列表
+    news_list = []
+    for new in news:
+        news_list.append(new.to_review_dict())
 
-
+    data = {
+        "users": news_list,
+        "current_page": current_page,
+        "total_page": total_page
+    }
+    return render_template("admin/news_review.html", data=data)
 
 
 
