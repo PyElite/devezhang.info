@@ -37,10 +37,11 @@ def news_detail(news_id):
     # 4.收藏状态 6.关注作者
     is_followed = False
     is_collected = False
+
     if g.user:  # 如果已登录则判断是否已收藏或关注此作者
         if news in g.user.collection_news:
             is_collected = True
-            # 查询的哪张表？？？
+            # 查询的是关联字段的关联表
         if news.user.followers.filter(User.id == g.user.id).count()>0:
             is_followed = True
 
