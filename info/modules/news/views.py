@@ -199,7 +199,6 @@ def comment_like():
 
     if action not in ["add", "remove"]:
         return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
-    # ...为何不转int?
 
     # 3.查询参数
     try:
@@ -240,56 +239,5 @@ def comment_like():
     # 响应数据
     return jsonify(errno=RET.OK, errmsg="操作成功")
 
-
-@news_blu.route("/followed_user", methods=["POST"])
-@user_login_data
-def followed_user():
-    """关注当前新闻的作者"""
-    user = g.user
-
-    if not user:
-        return jsonify(errno=RET.SESSIONERR, errmsg="用户未登陆")
-    # 1.取参：user_id/action,格式JSON
-    user_id = request.json.get("user_id")
-    action = request.json.get("action")
-    # 2.校参：int/非空/action限定两个操作
-    if not all([user_id, action]):
-        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
-    try:
-        user_id = int(user_id)
-    except Exception as e:
-        current_app.logger.error(e)
-        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
-    if action not in ("follow", "unfollow"):
-        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
-
-    # 3.查询要关注的作者是否存在，前端数据不可靠
-    try:
-        target_user = User.query.get(user_id)
-    except Exception as e:
-        current_app.logger.error(e)
-        return jsonify(errno=RET.DBERR, errmsg="数据库查询失败")
-    if not target_user:
-        return jsonify(errno=RET.NODATA, errmsg="未查询到此用户数据")
-
-    # 4.处理关注或取消关注
-    if action == "follow":
-        # 禁止关注自己
-        if target_user == user:
-            return jsonify(errno=RET.PARAMERR, errmsg="不能关注自己")
-
-        # if target_user.followers.filter(User.id == g.user.id).count()>0:
-        if target_user in user.followed:
-            return jsonify(errno=RET.DATAEXIST, errmsg="您已关注")
-        target_user.followers.append(g.user)
-    else:
-        # 取消收藏
-        # if target_user.followers.filter(User.id == g.user.id).count()>0:
-        if target_user not in user.followed:
-            return jsonify(errno=RET.DATAERR, errmsg="您还未关注此用户")
-
-        target_user.followers.remove(g.user)
-    # 5.以上会自动提交，下面进行响应
-    return jsonify(errno=RET.OK, errmsg="操作成功")
 
 

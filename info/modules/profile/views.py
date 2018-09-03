@@ -1,7 +1,7 @@
-from flask import render_template, g, redirect, request, jsonify, current_app
+from flask import render_template, g, redirect, request, jsonify, current_app, abort
 
 from info import constants, db
-from info.models import Category, News
+from info.models import Category, News, User
 from info.modules.profile import profile_blu
 from info.utils.common import user_login_data
 from info.utils.image_storage import storage
@@ -256,3 +256,68 @@ def user_news_list():
     }
 
     return render_template("news/user_news_list.html", data=data)
+
+
+@profile_blu.route("/user_follow")
+@user_login_data
+def user_follow():
+    """个人中心用户关注的用户列表"""
+
+    user = g.user
+    # 取参：请求页码
+    p = request.args.get("p", 1)
+    try:
+        p = int(p)
+    except Exception as e:
+        current_app.logger.error(e)
+        p = 1
+    # 查询用户新闻并获取分页数据
+    followers = []
+    current_page = 1
+    total_page = 1
+
+    try:
+        paginate = user.followed.paginate(p, constants.USER_FOLLOWED_MAX_COUNT, False)
+        # 获取当前页数据，返回的是一个列表
+        followers = paginate.items
+        # 获取当前页
+        current_page = paginate.page
+        # 获取总页数
+        total_page = paginate.pages
+    except Exception as e:
+        current_app.logger.error(e)
+    # 将用户的新闻分页数据转成字典存入新的列表
+    followers_li = []
+    for follower in followers:
+        # 根据页面审核状态的需求，用to_review_dict()
+        followers_li.append(follower.to_dict())
+    data = {
+        "followers": followers_li,
+        "current_page": current_page,
+        "total_page": total_page
+    }
+
+    return render_template("news/user_follow.html", data=data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

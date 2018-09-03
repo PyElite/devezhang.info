@@ -13,42 +13,21 @@
 <body class="inframe_body">
         <h3 class="common_title">我的关注</h3>
         <ul class="card_list_con">
-            <li class="author_card card_list">
-                <a href="#" target="_blank" class="author_pic"><img src="../../static/news/images/cat.jpg" alt="author_pic"></a>
-                <a href="#" target="_blank" class="author_name">张大山</a>
-                <div class="author_resume">张大山的简介,张大山</div>
-                <div class="writings"><span>总篇数</span><b>23</b></div>
-                <div class="follows"><span>粉丝</span><b>36</b></div>
-                <a href="javascript:;" class="focus fr">关注</a>
-                <a href="javascript:;" class="focused fr"><span class="out">已关注</span><span class="over">取消关注</span></a>
-            </li>
-            <li class="author_card card_list">
-                <a href="#" target="_blank" class="author_pic"><img src="../../static/news/images/cat.jpg" alt="author_pic"></a>
-                <a href="#" target="_blank" class="author_name">张大山</a>
-                <div class="author_resume">张大山的简介,张大山</div>
-                <div class="writings"><span>总篇数</span><b>23</b></div>
-                <div class="follows"><span>粉丝</span><b>36</b></div>
-                <a href="javascript:;" class="focus fr">关注</a>
-                <a href="javascript:;" class="focused fr"><span class="out">已关注</span><span class="over">取消关注</span></a>
-            </li>
-            <li class="author_card card_list">
-                <a href="#" target="_blank" class="author_pic"><img src="../../static/news/images/cat.jpg" alt="author_pic"></a>
-                <a href="#" target="_blank" class="author_name">张大山</a>
-                <div class="author_resume">张大山的简介,张大山</div>
-                <div class="writings"><span>总篇数</span><b>23</b></div>
-                <div class="follows"><span>粉丝</span><b>36</b></div>
-                <a href="javascript:;" class="focus fr">关注</a>
-                <a href="javascript:;" class="focused fr"><span class="out">已关注</span><span class="over">取消关注</span></a>
-            </li>
-            <li class="author_card card_list">
-                <a href="#" target="_blank" class="author_pic"><img src="../../static/news/images/cat.jpg" alt="author_pic"></a>
-                <a href="#" target="_blank" class="author_name">张大山</a>
-                <div class="author_resume">张大山的简介,张大山</div>
-                <div class="writings"><span>总篇数</span><b>23</b></div>
-                <div class="follows"><span>粉丝</span><b>36</b></div>
-                <a href="javascript:;" class="focus fr">关注</a>
-                <a href="javascript:;" class="focused fr"><span class="out">已关注</span><span class="over">取消关注</span></a>
-            </li>
+
+            {% for follower in data.followers %}
+
+                <li class="author_card card_list">
+                    <a href="#" target="_blank" class="author_pic"><img src="{% if follower.avatar_url %}{{ follower.avatar_url }}{% else %}../../static/news/images/cat.jpg{% endif %}" alt="author_pic"></a>
+                    <a href="#" target="_blank" class="author_name">{{ follower.nick_name }}</a>
+                    <div class="author_resume">{{ follower.signature }}</div>
+                    <div class="writings"><span>总篇数</span><b>{{ follower.news_count }}</b></div>
+                    <div class="follows"><span>粉丝</span><b>{{ follower.followers_count }}</b></div>
+    {#                在点击时将用户的id传递#}
+                    <a href="javascript:;" class="focused fr" data-userid="{{ follower.id }}"><span class="out">已关注</span><span class="over">取消关注</span></a>
+                </li>
+
+            {% endfor %}
+
         </ul>
         
         
@@ -56,10 +35,10 @@
         <script>
             $(function() {
                 $("#pagination").pagination({
-                    currentPage: 2,
-                    totalPage: 3,
-                    callback: function(current) {
-                        alert('ok!');
+                        currentPage: {{ data.current_page }},
+                        totalPage: {{ data.total_page }},
+                        callback: function(current) {
+                            window.location = "/user/user_follow?p=" + current
                     }
                 });
             });
