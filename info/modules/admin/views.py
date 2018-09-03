@@ -1,12 +1,13 @@
 import time
 from datetime import datetime, timedelta
 
-from flask import render_template, request, current_app, jsonify, session, redirect, url_for, g
+from flask import render_template, request, current_app, jsonify, session, redirect, url_for, g, abort
 
 from info import constants
 from info.models import User, News, Category
 from info.modules.admin import admin_blu
 from info.utils.common import user_login_data
+from info.utils.image_storage import storage
 from info.utils.response_code import RET
 
 
@@ -59,7 +60,7 @@ def login():
         return redirect(url_for("admin.index"))  # admin是蓝图的别名
 
 
-@admin_blu.route("user_count")
+@admin_blu.route("/user_count")
 def user_count():
     """用户统计页面"""
     # 1.查询总人数
@@ -161,7 +162,7 @@ def user_list():
     return render_template("admin/user_list.html", data=data)
 
 
-@admin_blu.route("news_review")
+@admin_blu.route("/news_review")
 def news_review_list():
     """新闻待审核列表"""
     # 1.列表需要分页，取参：页码，搜索关键字
@@ -204,6 +205,7 @@ def news_review_list():
     return render_template("admin/news_review.html", data=data)
 
 
+# @admin_blu.route("/news_review_detail/<int:news_id>", methods=["GET", "POST"]")
 @admin_blu.route("/news_review_detail", methods=["GET", "POST"])
 def news_review_detail():
     """新闻审核详情页"""
@@ -284,8 +286,8 @@ def news_edit_list():
             filters.append(News.title.contains(keywords))
         # 分页查询
         paginate = News.query.filter(*filters). \
-            order_by(News.create_time.desc()). \
-            paginate(page, constants.ADMIN_NEWS_PAGE_MAX_COUNT, False)
+                                order_by(News.create_time.desc()). \
+                                paginate(page, constants.ADMIN_NEWS_PAGE_MAX_COUNT, False)
         news = paginate.items
         current_page = paginate.page
         total_page = paginate.pages
@@ -304,44 +306,112 @@ def news_edit_list():
     return render_template("admin/news_edit.html", data=data)
 
 
-@admin_blu.route('/news_edit_detail')
+@admin_blu.route('/news_edit_detail', methods=["GET", "POST"])
 def news_edit_detail():
     """新闻版式编辑详情页面"""
-    # 1.取参：news_id
-    news_id = request.args.get("news_id")
-    # 2.校参：非空
-    if not news_id:
-        return render_template('admin/news_edit_detail.html', data={"errmsg": "未查询到此新闻"})
+    if request.method == "GET":
+        # 1.取参：news_id
+        news_id = request.args.get("news_id")
+        # 2.校参：非空/int
+        if not news_id:
+            # return render_template('admin/news_edit_detail.html', data={"errmsg": "未查询到此新闻"})
+            abort(404)
+        try:
+            news_id = int(news_id)
+        except Exception as e:
+            current_app.logger.error(e)
+            return render_template('admin/news_edit_detail.html', data={"errmsg": "未查询到此新闻"})
+        # 3.查询：根据新闻ID
+        news = None
+        try:
+            news = News.query.get(news_id)
+        except Exception as e:
+            current_app.logger.error(e)
+        # 4.判断是否存在此新闻
+        if not news:
+            return render_template('admin/news_edit_detail.html', data={"errmsg": "未查询到此新闻"})
 
-    # 3.查询：根据新闻ID
-    news = None
-    try:
-        news = News.query.get(news_id)
-    except Exception as e:
-        current_app.logger.error(e)
-    # 4.判断是否存在此新闻
-    if not news:
-        return render_template('admin/news_edit_detail.html', data={"errmsg": "未查询到此新闻"})
+        # 5.查询分类数据:
+        categories = Category.query.all()
+        categories_li = []
+        for category in categories:
+            c_dict = category.to_dict()
+            # 添加新的元素：默认当前分类不被选中
+            c_dict["is_selected"] = False
+            # 如果(当前新闻的关联分类id)等于(当前遍历的分类id)则修改为已被选中
+            if category.id == news.category_id:
+                c_dict["is_selected"] = True
+            categories_li.append(c_dict)
+        # 移除"最新"这个分类
+        categories_li.pop(0)
 
-    # 5.查询分类数据
-    categories = Category.query.all()
-    categories_li = []
-    for category in categories:
-        c_dict = category.to_dict()
-        # 添加新的元素：默认不选择
-        c_dict["is_selected"] = False
-        # 如果(当前新闻的关联分类id)等于(当前遍历的分类id)则修改为已被选择
-        if category.id == news.category_id:
-            c_dict["is_selected"] = True
-        categories_li.append(c_dict)
-    # 移除"最新"这个分类
-    categories_li.pop(0)
+        data = {
+            "news": news.to_dict(),
+            "categories": categories_li
+        }
+        return render_template('admin/news_edit_detail.html', data=data)
+    else:
+        # 否则POST提交版式修改
+        # 1.取参：news_id。。。。。
+        news_id = request.form.get("news_id")
+        title = request.form.get("title ")
+        digest = request.form.get("digest ")
+        content = request.form.get("content")
+        category_id = request.form.get("category_id ")
+        index_image = request.files.get("index_image ")
+        # 2.校参：非空
+        if not all([title, digest, content, category_id]):
+            return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+        # 3.尝试查询
+        news = None
+        try:
+            news = News.query.get(news_id)
+        except Exception as e:
+            current_app.logger.error(e)
+        if not news:
+            return jsonify(errno=RET.NODATA, errmsg="未查询到此新闻数据")
+        # 4.尝试读取图片数据并上传七牛云，没有图片就走下一步
+        if index_image:
+            # 读取
+            try:
+                index_image = index_image.read()  # 直接读取
+            except Exception as e:
+                current_app.logger.error(e)
+            # 上传
+            try:
+                key = storage(index_image)
+                index_image = index_image.read()  # 直接读取
+            except Exception as e:
+                current_app.logger.error(e)
+                return jsonify(errno=RET.THIRDERR, errmsg="上传图片时发生错误")
+            # 拼接新闻图片的地址，最后将自动上传
+            news.index_image_url = constants.QINIU_DOMIN_PREFIX + key
+        # 5.设置此新闻的数据
+        news.title = title
+        news.digest = digest
+        news.content = content
+        news.category_id = category_id
+        # 6.响应
+        return jsonify(errno=RET.OK, errmsg="版式编辑成功")
 
-    data = {
-        "news": news.to_dict(),
-        "categories": categories_li
-    }
-    return render_template('admin/news_edit_detail.html', data=data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
