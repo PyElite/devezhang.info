@@ -35,7 +35,7 @@ def news_list():
     if cid != 1:  # 如果分类id不为1，需添加分类id的过滤
         # 需添加过滤条件
         filters.append(News.category_id == cid)
-        '''疑问点'''
+        '''疑问点：拆包'''
         print(*filters)
     try:
         # *filters相当于对filters列表拆包
@@ -71,24 +71,16 @@ def index():
 
     # 1.查询用户是否登录
     user = g.user
-    # user_id = session.get('user_id', None)
-    # user = None  # 避免用户未登录时查询模型失败
-    # if user_id:
-    #     # 已经登录则尝试查询用户模型
-    #     try:
-    #         user = User.query.get(user_id)
-    #     except Exception as e:
-    #         current_app.logger.error(e)
 
     # 2.右侧新闻排行
-    news_list = []
+    news_li = []
     try:
-        news_list = News.query.order_by(News.clicks.desc()).limit(constants.CLICK_RANK_MAX_NEWS)
+        news_li = News.query.order_by(News.clicks.desc()).limit(constants.CLICK_RANK_MAX_NEWS)
     except Exception as e:
         current_app.logger.error(e)
     # 遍历分页查询结果转成字典存入新的列表
     news_dict_li = []
-    for news in news_list:
+    for news in news_li:
         news_dict_li.append(news.to_basic_dict())
     # 3.上方新闻分类
     categories = Category.query.all()

@@ -38,11 +38,12 @@ def news_detail(news_id):
     is_followed = False
     is_collected = False
 
-    if g.user:  # 如果已登录则判断是否已收藏或关注此作者
-        if news in g.user.collection_news:
+    if news.user_id and user:  # 如果新闻有作者且已登录，则判断是否已收藏或关注此作者
+        if news in user.collection_news:
             is_collected = True
             # 查询的是关联字段的关联表
-        if news.user.followers.filter(User.id == g.user.id).count()>0:
+        # if news.user.followers.filter(User.id == user.id).count()>0:
+        if news.user_id in user.followed:
             is_followed = True
 
     # 5.查询当前新闻评论数据
@@ -244,7 +245,9 @@ def comment_like():
 @user_login_data
 def followed_user():
     """关注当前新闻的作者"""
-    if not g.user:
+    user = g.user
+
+    if not user:
         return jsonify(errno=RET.SESSIONERR, errmsg="用户未登陆")
     # 1.取参：user_id/action,格式JSON
     user_id = request.json.get("user_id")
@@ -259,6 +262,7 @@ def followed_user():
         return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
     if action not in ("follow", "unfollow"):
         return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+
     # 3.查询要关注的作者是否存在，前端数据不可靠
     try:
         target_user = User.query.get(user_id)
@@ -267,15 +271,24 @@ def followed_user():
         return jsonify(errno=RET.DBERR, errmsg="数据库查询失败")
     if not target_user:
         return jsonify(errno=RET.NODATA, errmsg="未查询到此用户数据")
+
     # 4.处理关注或取消关注
     if action == "follow":
-        if target_user.followers.filter(User.id == g.user.id).count()>0:
+        # 禁止关注自己
+        if target_user == user:
+            return jsonify(errno=RET.PARAMERR, errmsg="不能关注自己")
+
+        # if target_user.followers.filter(User.id == g.user.id).count()>0:
+        if target_user in user.followed:
             return jsonify(errno=RET.DATAEXIST, errmsg="您已关注")
         target_user.followers.append(g.user)
     else:
         # 取消收藏
-        if target_user.followers.filter(User.id == g.user.id).count()>0:
-            target_user.followers.remove(g.user)  # ???
+        # if target_user.followers.filter(User.id == g.user.id).count()>0:
+        if target_user not in user.followed:
+            return jsonify(errno=RET.DATAERR, errmsg="您还未关注此用户")
+
+        target_user.followers.remove(g.user)
     # 5.以上会自动提交，下面进行响应
     return jsonify(errno=RET.OK, errmsg="操作成功")
 
