@@ -7,6 +7,7 @@ $(function(){
     $(".news_edit").submit(function (e) {
         e.preventDefault()
         // 新闻编辑提交
+
         // ajaxSubmmit模拟ajax的方式完成表单提交，会自动拼接带name的input标签组成字典
         $(this).ajaxSubmit({
             beforeSubmit: function (request) {
@@ -15,7 +16,7 @@ $(function(){
                 for(var i=0; i<request.length; i++) {
                     var item = request[i]
                     if (item["name"] == "content") {
-                        // ????
+                        // 前段框架，将value值渲染成富文本返回
                         item["value"] = tinyMCE.activeEditor.getContent()
                     }
                 }

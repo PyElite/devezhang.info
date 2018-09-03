@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from flask import render_template, request, current_app, jsonify, session, redirect, url_for, g, abort
 
-from info import constants
+from info import constants, db
 from info.models import User, News, Category
 from info.modules.admin import admin_blu
 from info.utils.common import user_login_data
@@ -354,6 +354,7 @@ def news_edit_detail():
         # 否则POST提交版式修改
         # 1.取参：news_id。。。。。
         news_id = request.form.get("news_id")
+
         title = request.form.get("title ")
         digest = request.form.get("digest ")
         content = request.form.get("content")
@@ -380,7 +381,6 @@ def news_edit_detail():
             # 上传
             try:
                 key = storage(index_image)
-                index_image = index_image.read()  # 直接读取
             except Exception as e:
                 current_app.logger.error(e)
                 return jsonify(errno=RET.THIRDERR, errmsg="上传图片时发生错误")
@@ -393,6 +393,61 @@ def news_edit_detail():
         news.category_id = category_id
         # 6.响应
         return jsonify(errno=RET.OK, errmsg="版式编辑成功")
+
+
+@admin_blu.route("/news_category", methods=["GET", "POST"])
+def get_news_category():
+    """新闻分类管理页面"""
+    if request.method == "GET":
+        # 1.查询所有的分类数据并转成字典保存
+        categories = []
+        try:
+            categories = Category.query.all()
+        except Exception as e:
+            current_app.logger.error(e)
+        if not categories:
+            return render_template("admin/news_type.html", errmsg="未查询到此新闻数据")
+
+        categories_dict_li = []
+        for category in categories:
+            category = category.to_dict()
+            categories_dict_li.append(category)
+        # 2.删除最新这个分类
+        categories_dict_li.pop(0)
+        data = {
+            "categories": categories_dict_li
+        }
+        # 3.响应渲染模板
+        return render_template("admin/news_type.html", data=data)
+    else:
+        # POST请求修改分类数据:格式json
+        # 1.取参：分类id/分类name
+        cid = request.json.get("id")
+        c_name = request.json.get("name")
+        # 2.校参：非空
+        if not c_name:
+            return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+        # 3.如果有cid就查询并修改
+        if cid:
+            try:
+                category = Category.query.get(cid)
+            except Exception as e:
+                current_app.logger.error(e)
+                return jsonify(errno=RET.DBERR, errmsg="查询数据失败")
+            if not category:
+                return jsonify(errno=RET.NODATA, errmsg="未查询到分类信息")
+            # 赋值修改
+            category.name = c_name
+        else:
+            # 没有cid则是新增分类
+            category = Category()
+            category.name = c_name
+            # 新增模型需要add
+            db.session.add(category)
+        # 4.以上将会自动提交，进行响应
+        return jsonify(errno=RET.OK, errmsg="保存数据成功")
+
+
 
 
 
