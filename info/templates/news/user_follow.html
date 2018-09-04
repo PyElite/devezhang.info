@@ -17,8 +17,8 @@
             {% for follower in data.followers %}
 
                 <li class="author_card card_list">
-                    <a href="#" target="_blank" class="author_pic"><img src="{% if follower.avatar_url %}{{ follower.avatar_url }}{% else %}../../static/news/images/cat.jpg{% endif %}" alt="author_pic"></a>
-                    <a href="#" target="_blank" class="author_name">{{ follower.nick_name }}</a>
+                    <a href="{{ url_for("profile.other_info") }}?user_id={{ follower.id }}" target="_blank" class="author_pic"><img src="{% if follower.avatar_url %}{{ follower.avatar_url }}{% else %}../../static/news/images/cat.jpg{% endif %}" alt="author_pic"></a>
+                    <a href="{{ url_for("profile.other_info") }}?user_id={{ follower.id }}" target="_blank" class="author_name">{{ follower.nick_name }}</a>
                     <div class="author_resume">{{ follower.signature }}</div>
                     <div class="writings"><span>总篇数</span><b>{{ follower.news_count }}</b></div>
                     <div class="follows"><span>粉丝</span><b>{{ follower.followers_count }}</b></div>

@@ -300,10 +300,86 @@ def user_follow():
     return render_template("news/user_follow.html", data=data)
 
 
+@profile_blu.route("/other_info")
+@user_login_data
+def other_info():
+    """其他用户信息"""
+    user = g.user
+
+    # 1.取参：其他用户id
+    other_id = request.args.get("user_id")
+    if not other_id:
+        abort(404)
+    # 2.查询当前用户
+    other = None
+    try:
+        other = User.query.get(other_id)
+    except Exception as e:
+        current_app.logger.error(e)
+
+    if not other:
+        abort(404)
+    # 4.关注状态
+    is_followed = False
+
+    if user and other:
+        if other in user.followed:
+            is_followed = True
+
+    data = {
+        "user": user.to_dict() if user else None,
+        "other_info": other.to_dict(),
+        "is_followed": is_followed
+    }
+    return render_template('news/other.html', data=data)
 
 
+@profile_blu.route('/other_news_list')
+def other_news_list():
+    """其他用户发布的新闻列表"""
+    # 获取页数
+    p = request.args.get("p", 1)
+    user_id = request.args.get("user_id")
+    # 校参
+    try:
+        p = int(p)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
 
+    if not all([p, user_id]):
+        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+    # 尝试用户查询
+    try:
+        user = User.query.get(user_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg="数据查询错误")
 
+    if not user:
+        return jsonify(errno=RET.NODATA, errmsg="用户不存在")
+    # 尝试查询新闻分页
+    try:
+        paginate = News.query.filter(News.user_id == user.id).paginate(p, constants.OTHER_NEWS_PAGE_MAX_COUNT, False)
+        # 获取当前页数据
+        news_li = paginate.items
+        # 获取当前页
+        current_page = paginate.page
+        # 获取总页数
+        total_page = paginate.pages
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg="数据查询错误")
+
+    news_dict_li = []
+
+    for news in news_li:
+        news_dict_li.append(news.to_basic_dict())
+    data = {
+        "news_list": news_dict_li,
+        "total_page": total_page,
+        "current_page": current_page}
+    return jsonify(errno=RET.OK, errmsg="OK", data=data)
 
 
 

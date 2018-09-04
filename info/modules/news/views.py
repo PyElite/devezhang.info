@@ -80,7 +80,7 @@ def news_detail(news_id):
 
     data = {
         "user": user.to_dict() if user else None,
-        "news_dict_li": news_dict_li,
+        "news_dict_li": news_dict_li,  # 点击排行榜用
         "news": news.to_dict(),  # to_dict(）渲染模板不用转成字典，jsonify需要转成属性字典
         "is_collected": is_collected,
         "comments": comment_dict_li,
