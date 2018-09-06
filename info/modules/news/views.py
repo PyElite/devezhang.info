@@ -34,16 +34,21 @@ def news_detail(news_id):
         abort(400)  # 没有此新闻，请求无效
     # 更新新闻点击数
     news.clicks += 1
-    # 4.收藏状态 6.关注作者
-    is_followed = False
-    is_collected = False
 
-    if news.user_id and user:  # 如果新闻有作者且已登录，则判断是否已收藏或关注此作者
+    # 4.收藏状态
+    is_collected = False
+    if user:
+        # 判断用户是否收藏当前新闻，如果收藏：
+        # collection_news 后面可以不用加all，因为sqlalchemy会在使用的时候去自动加载
         if news in user.collection_news:
             is_collected = True
-            # 查询的是关联字段的关联表
-        # if news.user.followers.filter(User.id == user.id).count()>0:
-        if news.user_id in user.followed:
+
+    # 4.1.关注作者
+    is_followed = False
+    # if 当前新闻有作者，并且 当前登录用户已关注过这个用户
+    if news.user and user:
+        # if user 是否关注过 news.user
+        if news.user in user.followed:
             is_followed = True
 
     # 5.查询当前新闻评论数据
