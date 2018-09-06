@@ -10,7 +10,7 @@ $(function () {
 
         var signature = $("#signature").val()
         var nick_name = $("#nick_name").val()
-        var gender = $(".gender").val()
+        var gender = $('input[name="gender"]:checked').val()
 
         if (!nick_name) {
             alert('请输入昵称')
