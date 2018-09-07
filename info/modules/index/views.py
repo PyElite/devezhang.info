@@ -82,6 +82,7 @@ def index():
     news_dict_li = []
     for news in news_li:
         news_dict_li.append(news.to_basic_dict())
+
     # 3.上方新闻分类
     categories = Category.query.all()
     # 空列表保存分类数据
@@ -106,4 +107,4 @@ def index():
 def favicon():
     # 此处取不到app,可用应用上下文current_app
     # 其send_static_file方法是系统访问静态文件的方法
-    return current_app.send_static_file('news/favicon.ico')
+    return current_app.send_static_file('admin/images/favicon.ico')

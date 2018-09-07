@@ -14,7 +14,7 @@
 <body>
     <div class="header_con">
         <div class="header">
-            <a href="/" class="logo fl"><img src="../../static/news/images/logo.png" alt="logo"></a>
+            <a href="/" class="logo fl"><img src="../../static/news/images/logo3.png" alt="logo"></a>
 
             {% block category_menu_block %}
                 <ul class="menu fl">
@@ -55,7 +55,7 @@
                 {% endblock %}
 
                 <div class="rank_title">
-                    <h3>点击排行</h3>
+                    <h3>点击量排行榜</h3>
                 </div>
 
                 <ul class="rank_list">
@@ -81,18 +81,13 @@
     {% block bottom_block %}
         <div class="footer">
             <div class="footer_links">
-                <a href="">关于我们</a>
+                <a href="/user/other_info?user_id=3">关于我</a>
                 <span>|</span>
-                <a href="">联系我们</a>
-                <span>|</span>
-                <a href="">招聘人才</a>
+                <a href="">联系我</a>
                 <span>|</span>
                 <a href="">友情链接</a>
             </div>
-            <p class="copyright">
-                CopyRight © 2018 新经资讯信息技术有限公司 All Rights Reserved<br />
-    电话：010-****888    京ICP备*******8号
-            </p>
+            <p class="copyright">Powered by devezhang<br /></p>
         </div>
     {% endblock %}
 
