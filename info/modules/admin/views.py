@@ -355,11 +355,11 @@ def news_edit_detail():
         # 1.取参：news_id。。。。。
         news_id = request.form.get("news_id")
 
-        title = request.form.get("title ")
-        digest = request.form.get("digest ")
+        title = request.form.get("title")
+        digest = request.form.get("digest")
         content = request.form.get("content")
-        category_id = request.form.get("category_id ")
-        index_image = request.files.get("index_image ")
+        category_id = request.form.get("category_id")
+        index_image = request.files.get("index_image")
         # 2.校参：非空
         if not all([title, digest, content, category_id]):
             return jsonify(errno=RET.PARAMERR, errmsg="参数错误")

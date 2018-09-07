@@ -21,11 +21,11 @@
                 <h3 class="review_title">新闻版式编辑</h3>
                 <div class="form_group">
                     <label>新闻标题：</label>
-                    <input type="text" class="input_txt2" value="{{ data.news.title }}">
+                    <input type="text" name="title" class="input_txt2" value="{{ data.news.title }}">
                 </div>
                 <div class="form_group">
                     <label>新闻分类：</label>
-                    <select class="sel_opt">
+                    <select class="sel_opt" name="category_id">
     {#					<option value="">分类一</option>#}
     {#					<option value="">分类二</option>#}
     {#					<option value="">分类三</option>#}
@@ -38,7 +38,7 @@
                 </div>
                 <div class="form_group">
                     <label>新闻摘要：</label>
-                    <textarea class="input_multxt">{{ data.news.digest }}</textarea>
+                    <textarea class="input_multxt" name="digest">{{ data.news.digest }}</textarea>
                 </div>
                 <div class="form_group">
                     <label>索引图片：</label>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="form_group">
                     <label>上传图片：</label>
-                    <input type="file" class="input_file">
+                    <input type="file" class="input_file" name="index_image">
                 </div>
                 <div class="form_group">
                     <label>新闻内容：</label>
