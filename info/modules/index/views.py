@@ -75,7 +75,8 @@ def index():
     # 2.右侧新闻排行
     news_li = []
     try:
-        news_li = News.query.order_by(News.clicks.desc()).limit(constants.CLICK_RANK_MAX_NEWS)
+        # 新闻的审核状态：0通过，1审核中，-1未通过
+        news_li = News.query.filter(News.status == 0).order_by(News.clicks.desc()).limit(constants.CLICK_RANK_MAX_NEWS)
     except Exception as e:
         current_app.logger.error(e)
     # 遍历分页查询结果转成字典存入新的列表

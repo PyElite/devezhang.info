@@ -274,6 +274,10 @@ def followed_user():
 
     # 根据不同操作做不同逻辑
     if action == "follow":
+        # 添加不能关注自己的逻辑
+        if user.id == user_id:
+            return jsonify(errno=RET.DATAERR, errmsg="您不能关注自己")
+        # 关注目标用户
         if target_user not in user.followed:
             target_user.followers.append(g.user)
         else:
