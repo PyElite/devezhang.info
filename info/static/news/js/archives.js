@@ -29,8 +29,6 @@ $(function () {
 
 
         var clickCid = $(this).attr('data-cid')
-        // 界面加载完成后加载新闻数据
-        updateNewsData()
         // 如果点击cid不等于当前cid,则设置当前cid为点击cid,实现切换cid分类
         // 修改
         if (clickCid !== currentCid) {
