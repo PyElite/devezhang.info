@@ -34,7 +34,7 @@ def news_list():
     # 1.查询所有文章并按创建时间进行排序
     try:
         # *filters相当于对filters列表拆包
-        paginate = News.query.order_by(News.create_time.desc()).paginate(page, per_page, False)
+        paginate = News.query.filter(News.status == 0).order_by(News.create_time.desc()).paginate(page, per_page, False)
         # 获取查询出来的数据
         items = paginate.items
         # 获取总页数
@@ -88,7 +88,7 @@ def archives_news_list():
     # 1.查询档案分类列表并按创建时间进行排序
     try:
         # *filters相当于对filters列表拆包
-        paginate = News.query.filter(News.category_id == cid).order_by(News.create_time).paginate(page, per_page, False)
+        paginate = News.query.filter(News.category_id == cid, News.status == 0).order_by(News.create_time).paginate(page, per_page, False)
         # 获取查询出来的数据
         items = paginate.items
         # 获取总页数
