@@ -26,8 +26,10 @@
                             <li data-cid="{{ category.id }}" class="active"><a href="/">{{ category.name }}</a></li>
                         {% elif category.name == "Archives" %}
                             <li data-cid="{{ category.id }}" id="Archives"><a href="/archives">{{ category.name }}</a></li>
+                        {% elif category.name == "Project" %}
+                            <li data-cid="{{ category.id }}"><a href="https://gitee.com/devezhang/projects" target="_blank">{{ category.name }}</a></li>
                         {% else %}
-                            <li data-cid="{{ category.id }}"><a href="javascript:;">{{ category.name }}</a></li>
+                            <li data-cid="{{ category.id }}"><a href="https://gitee.com/devezhang" target="_blank">{{ category.name }}</a></li>
                         {% endif %}
                     {% endfor %}
                 </ul>
