@@ -46,6 +46,66 @@ img{
 }
 
 
+.tab_wrap{
+    width:820px;
+    height: 50px;
+    margin:auto 0;
+    float: left;
+    overflow:hidden;
+    position:relative;
+}
+
+.tab_btns{
+    height:50px;
+}
+.tab_btns input{
+    width:100px;
+    height:50px;
+    border:0px;
+    background:#3367d6;
+    font-size:14px;
+    outline:none;
+    color: white;
+    border-radius:15px;
+}
+.tab_btns .current{
+    background:#f9f9f9;
+    color: #333;
+}
+
+.tab_cons{
+    /*height:40px;*/
+    width:820px;
+    background:#f9f9f9;
+    float: left;
+    margin-top: 10px;
+}
+
+.tab_cons li{
+    line-height:30px;
+    margin:15px 20px;
+    overflow:hidden;
+    border-bottom:1px dashed #333;
+}
+
+.tab_cons a{
+
+    overflow:hidden;/*超出长度的文字隐藏*/
+    text-overflow:ellipsis;/*文字隐藏以后添加省略号*/
+    white-space:nowrap;/*强制不换行*/
+    width: 640px;
+    font-size:14px;
+    color:#333;
+    float:left;
+}
+
+.tab_cons span{
+    font-size:14px;
+    color:#666;
+    float:right;
+}
+
+
 
 
 

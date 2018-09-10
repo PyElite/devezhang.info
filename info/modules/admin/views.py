@@ -332,7 +332,17 @@ def news_edit_detail():
             return render_template('admin/news_edit_detail.html', data={"errmsg": "未查询到此新闻"})
 
         # 5.查询分类数据:
-        categories = Category.query.all()
+        filters = [Category.name != "Home",
+                   Category.name != "Archives",
+                   Category.name != "Project",
+                   Category.name != "About"
+                  ]
+        categories = []
+        try:
+            categories = Category.query.filter(*filters).all()
+        except Exception as e:
+            current_app.logger.error(e)
+
         categories_li = []
         for category in categories:
             c_dict = category.to_dict()
@@ -342,8 +352,6 @@ def news_edit_detail():
             if category.id == news.category_id:
                 c_dict["is_selected"] = True
             categories_li.append(c_dict)
-        # 移除"最新"这个分类
-        categories_li.pop(0)
 
         data = {
             "news": news.to_dict(),
@@ -400,11 +408,17 @@ def get_news_category():
     """新闻分类管理页面"""
     if request.method == "GET":
         # 1.查询所有的分类数据并转成字典保存
+        filters = [Category.name != "Home",
+                   Category.name != "Archives",
+                   Category.name != "Project",
+                   Category.name != "About"
+                  ]
         categories = []
         try:
-            categories = Category.query.all()
+            categories = Category.query.filter(*filters).all()
         except Exception as e:
             current_app.logger.error(e)
+
         if not categories:
             return render_template("admin/news_type.html", errmsg="未查询到此新闻数据")
 
@@ -412,8 +426,7 @@ def get_news_category():
         for category in categories:
             category = category.to_dict()
             categories_dict_li.append(category)
-        # 2.删除最新这个分类
-        categories_dict_li.pop(0)
+
         data = {
             "categories": categories_dict_li
         }

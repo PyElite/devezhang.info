@@ -18,9 +18,14 @@
 
             {% block category_menu_block %}
                 <ul class="menu fl">
+
+{#                如果第1个就显示，剩余的就添加链接，第2个跳转到新的页面显示分类，第3个跳到一个个人介绍页面#}
+
                     {% for category in data.categories %}
-                        {% if loop.index == 1 %}
-                            <li data-cid="{{ category.id }}" class="active"><a href="javascript:;">{{ category.name }}</a></li>
+                        {% if category.name == "Home" %}
+                            <li data-cid="{{ category.id }}" class="active"><a href="/">{{ category.name }}</a></li>
+                        {% elif category.name == "Archives" %}
+                            <li data-cid="{{ category.id }}" id="Archives"><a href="/archives">{{ category.name }}</a></li>
                         {% else %}
                             <li data-cid="{{ category.id }}"><a href="javascript:;">{{ category.name }}</a></li>
                         {% endif %}
@@ -55,7 +60,7 @@
                 {% endblock %}
 
                 <div class="rank_title">
-                    <h3>点击量排行榜</h3>
+                    <h3>本站最热</h3>
                 </div>
 
                 <ul class="rank_list">
@@ -83,9 +88,9 @@
             <div class="footer_links">
                 <a href="/user/other_info?user_id=1">关于我</a>
                 <span>|</span>
-                <a href="">联系我</a>
+                <a href="javascript:;">联系我</a>
                 <span>|</span>
-                <a href="">友情链接</a>
+                <a href="javascript:;">友情链接</a>
             </div>
             <p class="copyright">Powered by devezhang<br /></p>
         </div>

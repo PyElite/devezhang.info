@@ -154,19 +154,25 @@ def news_release():
     """用户个人中心新闻发布"""
     if request.method == "GET":  # 加载页面不需要获取用户对象
         # 新闻分类查询
-        categorys = []
+        # 1.查询排除Home/Archives/About的所有分类，并拼接数据为字典
+        filters = [Category.name != "Home",
+                   Category.name != "Archives",
+                   Category.name != "Project",
+                   Category.name != "About"
+                  ]
+        categories = []
         try:
-            categorys = Category.query.all()
+            categories = Category.query.filter(*filters).all()
         except Exception as e:
             current_app.logger.error(e)
 
-        category_dict_li = []
-        for category in categorys:
-            category_dict_li.append(category.to_dict())
-        # 移除“最新”分类
-        category_dict_li.pop(0)
+        # 空列表保存分类数据
+        categories_archives_li = []
+        # 查询所有，遍历后分别将属性转成字典存入新列表
+        for category in categories:
+            categories_archives_li.append(category.to_dict())
+        return render_template("news/user_news_release.html", data={"categories": categories_archives_li})
 
-        return render_template("news/user_news_release.html", data={"categories": category_dict_li})
     else:
         # POST 提交，执行发布新闻操作
         # 1.获取要提交的数据
@@ -380,20 +386,3 @@ def other_news_list():
         "total_page": total_page,
         "current_page": current_page}
     return jsonify(errno=RET.OK, errmsg="OK", data=data)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

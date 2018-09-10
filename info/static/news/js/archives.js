@@ -1,30 +1,41 @@
-var currentCid = 1; // 当前分类 id
+var currentCid = 5; // 当前分类 id
 var cur_page = 1; // 当前页
 var total_page = 1;  // 总页数
 var data_querying = true;   // 是否正在向后台获取数据
 
 
 $(function () {
-    // 界面加载完成后加载新闻数据
+
     updateNewsData()
+    // 给当前上排分类添加active类
+    $('#Archives').addClass('active');
+    $('#Archives').siblings().removeClass('active');
+
 
     // 首页分类切换
     $('.menu li').click(function () {
-        // 点击之后获取当前点击cid
-        var clickCid = $(this).attr('data-cid')
         // 遍历所有列表，清除active
         $('.menu li').each(function () {
             $(this).removeClass('active')
         })
+
         // 给当前点击对象添加active类
         $(this).addClass('active')
+    })
 
+
+    // 档案分类点击切换
+    $(".tab_btns input").click(function () {
+
+
+        var clickCid = $(this).attr('data-cid')
+        // 界面加载完成后加载新闻数据
+        updateNewsData()
         // 如果点击cid不等于当前cid,则设置当前cid为点击cid,实现切换cid分类
         // 修改
-        if (clickCid = currentCid) {
+        if (clickCid !== currentCid) {
             // 记录当前分类id
-            // currentCid = clickCid
-
+            currentCid = clickCid
             // 重置分页参数
             cur_page = 1
             total_page = 1
@@ -68,42 +79,43 @@ $(function () {
     })
 })
 
+
+
+
 function updateNewsData() {
     //  更新新闻数据
     var params = {
         'page': cur_page,
         'cid': currentCid,
-        'per_page': 10
+        'per_page': 15
     }
-    $.get('/all_news_list', params, function (resp) {
+    $.get('/archives_news_list', params, function (resp) {
         // 加载完成，设置请求状态为false
         data_querying = false
         if (resp.errno == '0'){
+            total_page = resp.data.total_page  // 给总页数赋上真实值
+
             // 代表请求成功
-            total_page = resp.data.total_page
 
             if(cur_page == 1){
                 // 判断如果当前是第一页，则清空原数据；
-                $('.list_con').html("");
+                $('.tab_cons').html("");
             }
             // 显示数据
             for (var i=0;i<resp.data.news_dict_li.length;i++){
                 var news = resp.data.news_dict_li[i];
-                var content = '<li>'
-                content += '<a href="/news/'+news.id+'" class="news_pic fl"><img src="' + news.index_image_url + '?imageView2/1/w/170/h/170"></a>'
-                content += '<a href="/news/'+news.id+'" class="news_title fl">' + news.title + '</a>'
-                content += '<a href="/news/'+news.id+'" class="news_detail fl">' + news.digest + '</a>'
-                content += '<div class="author_info fl">'
-                content += '<div class="source fl">来源：' + news.source + '</div>'
-                content += '<div class="time fl">' + news.create_time + '</div>'
-                content += '</div>'
-                content += '</li>'
+                // language=HTML
+                var content = '<li><a href="/news/'+news.id+'">' + news.title + '</a><span>' + news.create_time + '</span></li>';
                 // html添加内容数据，append从后面贴
-                $(".list_con").append(content)
+                $(".tab_cons").append(content);
             }
-        }else{
+        } else{
             // 代表请求失败
             alert(resp.errmsg)
         }
     })
 }
+
+
+
+

@@ -1,0 +1,48 @@
+{% extends "news/base.html" %}
+
+
+{% block title_block %}
+Archives - devezhang
+{% endblock %}
+
+{% block css_block %}
+    <link rel="stylesheet" href="../../static/admin/css/jquery.pagination.css">
+{% endblock %}
+
+{% block script_block %}
+    <script type="text/javascript" src="../../static/news/js/archives.js"></script>
+    <script type="text/javascript" src="../../static/admin/js/jquery.pagination.min.js"></script>
+    <script>
+        $(function(){
+            var $btns = $('.tab_btns input');
+
+            $btns.click(function(){
+                $(this).addClass('current').siblings().removeClass('current');
+                });
+        })
+    </script>
+{% endblock %}
+
+{% block content_block %}
+
+    <div class="tab_wrap">
+        <div class="tab_btns">
+            {% for archive in data.categories_archives %}
+                {% if loop.index == 1 %}
+                    <input data-cid="{{ archive.id }}" type="button" value="{{ archive.name }}" class="current">
+                {% else %}
+                    <input data-cid="{{ archive.id }}" type="button" value="{{ archive.name }}">
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <ul class="tab_cons">
+
+    </ul>
+
+
+
+{% endblock %}
+
+
