@@ -14,16 +14,18 @@ def news_detail(news_id):
 
     # 1.查询用户是否登录
     user = g.user
-    # 2.右侧新闻排行
-    news_list = []
+    # 2.查询右侧点击排行数据
+    news_li = []
     try:
-        news_list = News.query.order_by(News.clicks.desc()).limit(constants.CLICK_RANK_MAX_NEWS)
+        # 新闻的审核状态：0通过，1审核中，-1未通过
+        news_li = News.query.filter(News.status == 0).order_by(News.clicks.desc()).limit(constants.CLICK_RANK_MAX_NEWS)
     except Exception as e:
         current_app.logger.error(e)
     # 遍历分页查询结果转成字典存入新的列表
     news_dict_li = []
-    for news in news_list:
+    for news in news_li:
         news_dict_li.append(news.to_basic_dict())
+
     # 3.点击查询新闻数据
     news = None
     try:
