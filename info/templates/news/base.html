@@ -38,7 +38,7 @@
             {% if data.user %}
                 <!-- 用户登录后显示下面，隐藏上面 -->
                 <div class="user_login fr">
-                    <img src="{% if data.user.avatar_url %} {{ data.user.avatar_url }} {% else %} ../../static/news/images/person05.jpg{% endif %}" class="lgin_pic">
+                    <img src="{% if data.user.avatar_url %} {{ data.user.avatar_url }} {% else %} ../../static/news/images/person06.jpg{% endif %}" class="lgin_pic">
                     <a href="/user/info" id="nick_name">{{ data.user.nick_name }}</a>
                     {# 添加点击事件 #}
                     <a href="javascript:;" onclick="logout()">退出</a>
@@ -140,12 +140,13 @@
                 <img src="../../static/news/images/pic_code.png" class="get_pic_code" onclick="generateImageCode()">
                 <div id="register-image-code-err" class="error_tip">图形码不能为空</div>
             </div>
-{#            <div class="form_group">#}
-{#                <input type="text" name="smscode" id="smscode" class="code_pwd">#}
-{#                <div class="input_tip">手机验证码</div>#}
+            <div class="form_group">
+                <input type="text" name="smscode" id="smscode" class="code_pwd">
+                <div class="input_tip">手机验证码</div>
 {#                <a href="javascript:;" class="get_code" onclick="sendSMSCode()">点击获取验证码</a>#}
-{#                <div id="register-sms-code-err" class="error_tip">验证码不能为空</div>#}
-{#            </div>#}
+                <a href="javascript:;" class="get_code">无须填写,可跳过此步</a>
+                <div id="register-sms-code-err" class="error_tip">验证码不能为空</div>
+            </div>
             <div class="form_group">
                 <input type="password" name="password" id="register_password" class="pass_input">
                 <div class="input_tip">密码(不少于6位)</div>

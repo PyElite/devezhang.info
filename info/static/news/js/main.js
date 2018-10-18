@@ -153,7 +153,7 @@ $(function(){
 
 		// 取到用户输入的内容
         var mobile = $("#register_mobile").val()
-        var smscode = $("#smscode").val()
+        // var smscode = $("#smscode").val()
         var password = $("#register_password").val()
         var imageCode = $("#imagecode").val();
 

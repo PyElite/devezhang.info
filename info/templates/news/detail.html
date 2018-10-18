@@ -30,7 +30,7 @@
                     <img src="{% if data.user.avatar_url %}
                         {{ data.user.avatar_url }}
                     {% else %}
-                        ../../static/news/images/person01.png
+                        ../../static/news/images/person06.jpg
                     {% endif %}" alt="用户图标">
                 </div>
                 <textarea placeholder="请发表您的评论" class="comment_input"></textarea>
@@ -49,14 +49,14 @@
         <div class="comment_list_con">
             {% for comment in data.comments %}
                 <div class="comment_list">
-                    <div class="person_pic fl">
+                    <a class="person_pic fl" href="{{ url_for("profile.other_info") }}?user_id={{ comment.user.id }}" target="_blank">
                         <img src="{% if comment.user.avatar_url %}
                             {{ comment.user.avatar_url }}
                         {% else %}
-                            ../../static/news/images/person01.png
+                            ../../static/news/images/person06.jpg
                         {% endif %}" alt="用户图标">
-                    </div>
-                    <div class="user_name fl">{{ comment.user.nick_name }}</div>
+                    </a>
+                    <a class="user_name fl" href="{{ url_for("profile.other_info") }}?user_id={{ comment.user.id }}" target="_blank">{{ comment.user.nick_name }}</a>
                     <div class="comment_text fl">{{ comment.content }}</div>
                     {% if comment.parent %}
                         <div class="reply_text_con fl">
