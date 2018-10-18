@@ -368,7 +368,7 @@ def other_news_list():
         return jsonify(errno=RET.NODATA, errmsg="用户不存在")
     # 尝试查询新闻分页
     try:
-        paginate = News.query.filter(News.user_id == user.id).paginate(p, constants.OTHER_NEWS_PAGE_MAX_COUNT, False)
+        paginate = News.query.filter(News.user_id == user.id, News.status == 0).paginate(p, constants.OTHER_NEWS_PAGE_MAX_COUNT, False)
         # 获取当前页数据
         news_li = paginate.items
         # 获取当前页
