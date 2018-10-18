@@ -204,7 +204,13 @@ def login():
         return jsonify(errno=RET.DBERR, errmsg="数据查询错误")
     # 判断不为空
     if not user:
-        return jsonify(errno=RET.NODATA, errmsg="用户名或密码错误")
+        try:
+            user = User.query.filter(User.nick_name == mobile).first()
+        except Exception as e:
+            current_app.logger.error(e)
+            return jsonify(errno=RET.DBERR, errmsg="数据查询错误")
+        if not user:
+            return jsonify(errno=RET.NODATA, errmsg="用户名或密码错误")
     # 校验密码是否一致
     if not user.check_password(password):
         return jsonify(errno=RET.PWDERR, errmsg="用户名或密码错误")

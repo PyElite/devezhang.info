@@ -211,9 +211,8 @@ def news_release():
             except Exception as e:
                 current_app.logger.error(e)
                 return jsonify(errno=RET.THIRDERR, errmsg="上传图片错误")
-            else:
-                # 加url前缀,index_image_url表示首页图片地址
-                news.index_image_url = constants.QINIU_DOMIN_PREFIX + key
+            # 加url前缀,index_image_url表示首页图片地址
+            news.index_image_url = constants.QINIU_DOMIN_PREFIX + key
 
         # 5. 保存到数据库，不自己提交也没事，会自动提交
         try:
