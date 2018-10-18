@@ -104,7 +104,7 @@ class News(BaseModel, db.Model):
     digest = db.Column(db.String(512), nullable=False)  # 新闻摘要
     content = db.Column(db.Text, nullable=False)  # 新闻内容
     clicks = db.Column(db.Integer, default=0)  # 浏览量
-    index_image_url = db.Column(db.String(256))  # 新闻列表图片路径
+    index_image_url = db.Column(db.String(256), default="../../static/news/images/person04.png")  # 新闻列表图片路径
     category_id = db.Column(db.Integer, db.ForeignKey("info_category.id"))
     user_id = db.Column(db.Integer, db.ForeignKey("info_user.id"))  # 当前新闻的作者id
     status = db.Column(db.Integer, default=0)  # 当前新闻状态 如果为0代表审核通过，1代表审核中，-1代表审核不通过

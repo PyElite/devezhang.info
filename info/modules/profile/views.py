@@ -182,8 +182,9 @@ def news_release():
         content = request.form.get("content")
         index_image = request.files.get("index_image")
         category_id = request.form.get("category_id")
+
         # 2.校参 判断数据是否有值
-        if not all([title, source, digest, content, index_image, category_id]):
+        if not all([title, source, digest, content, category_id]):
             return jsonify(errno=RET.PARAMERR, errmsg="参数有误")
         try:
             category_id = int(category_id)
@@ -191,28 +192,30 @@ def news_release():
             current_app.logger.error(e)
             return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
 
-        # 3.尝试读取图片(将来显示到主页),上传到七牛
-        try:
-            index_image_data = index_image.read()  # 上面已经验证有值，不用分开try
-            key = storage(index_image_data)  # 将主页图片数据上传给七牛返回生成图片url
-        except Exception as e:
-            current_app.logger.error(e)
-            return jsonify(errno=RET.THIRDERR, errmsg="上传图片错误")
-
         # 3. 初始化新闻模型，并设置相关数据
         news = News()
         news.title = title
         news.digest = digest  # 摘要
         news.source = source  # 新闻来源
         news.content = content
-        # 加url前缀,index_image_url表示首页图片地址
-        news.index_image_url = constants.QINIU_DOMIN_PREFIX + key
         news.category_id = category_id
         news.user_id = g.user.id
         # 代表待审核状态
         news.status = 1
 
-        # 4. 保存到数据库，不自己提交也没事，会自动提交
+        # 4.尝试读取图片(将来显示到主页),上传到七牛
+        if index_image:
+            try:
+                index_image_data = index_image.read()  # 上面已经验证有值，不用分开try
+                key = storage(index_image_data)  # 将主页图片数据上传给七牛返回生成图片url
+            except Exception as e:
+                current_app.logger.error(e)
+                return jsonify(errno=RET.THIRDERR, errmsg="上传图片错误")
+            else:
+                # 加url前缀,index_image_url表示首页图片地址
+                news.index_image_url = constants.QINIU_DOMIN_PREFIX + key
+
+        # 5. 保存到数据库，不自己提交也没事，会自动提交
         try:
             db.session.add(news)
             db.session.commit()

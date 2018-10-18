@@ -114,24 +114,42 @@ def register():
     # 取参
     params_dict = request.json
     mobile = params_dict.get('mobile')
-    smscode = params_dict.get('smscode')
+    # smscode = params_dict.get('smscode')
     password = params_dict.get('password')
+
+    image_code = params_dict.get('image_code')
+    image_code_id = params_dict.get('image_code_id')
     # 判断有值
-    if not all([mobile, smscode, password]):
+    if not all([mobile, password]):
         return jsonify(errno=RET.PARAMERR, errmsg='参数错误')
-    if not re.match('1[135678]\\d{9}', mobile):
-        return jsonify(errno=RET.PARAMERR, errmsg='手机号格式错误')
+    # if not re.match('1[135678]\\d{9}', mobile):
+    if not re.match(r'.{2}.*', mobile, re.U):
+        return jsonify(errno=RET.PARAMERR, errmsg='用户名最短2位')
+
     # 从redis中取码
     try:
-        real_sms_code = redis_store.get('SMS:' + mobile)
+        real_image_code = redis_store.get('ImageCodeId:' + image_code_id)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR, errmsg='数据库查询错误')
-    if not real_sms_code:
+    if not real_image_code:
         return jsonify(errno=RET.NODATA, errmsg='图片验证码已失效')
     # 对比
-    if real_sms_code != smscode:
+    if real_image_code.upper() != image_code.upper():
         return jsonify(errno=RET.DATAERR, errmsg='验证码填写错误')
+
+    # 从redis中取码
+    # try:
+    #     real_sms_code = redis_store.get('SMS:' + mobile)
+    # except Exception as e:
+    #     current_app.logger.error(e)
+    #     return jsonify(errno=RET.DBERR, errmsg='数据库查询错误')
+    # if not real_sms_code:
+    #     return jsonify(errno=RET.NODATA, errmsg='短信验证码已失效')
+    # # 对比
+    # if real_sms_code != smscode:
+    #     return jsonify(errno=RET.DATAERR, errmsg='验证码填写错误')
+
     # 一致，则实例user模型到数据库
     user = User()
     user.mobile = mobile
@@ -176,8 +194,8 @@ def login():
         return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
 
     # 校验手机
-    if not re.match('1[35678]\\d{9}', mobile):
-        return jsonify(errno=RET.PARAMERR, errmsg="手机格式错误")
+    if not re.match(r'.{2}.*', mobile, re.U):
+        return jsonify(errno=RET.PARAMERR, errmsg="用户名格式错误")
     # 取密码
     try:
         user = User.query.filter(User.mobile == mobile).first()

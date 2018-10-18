@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>新经资讯后台管理</title>
+	<title>Devezhang后台管理</title>
 	<link rel="stylesheet" type="text/css" href="../../static/admin/css/reset.css">
 	<link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
 	<script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
@@ -13,18 +13,18 @@
 </head>
 <body>
 	<div class="breadcrub">
-			当前位置：新闻管理>新闻版本编辑			
+			当前位置：文章管理>文章版本编辑
 		</div>
 		<div class="pannel">
 
 			<form class="news_edit">
-                <h3 class="review_title">新闻版式编辑</h3>
+                <h3 class="review_title">文章版式编辑</h3>
                 <div class="form_group">
-                    <label>新闻标题：</label>
+                    <label>文章标题：</label>
                     <input type="text" name="title" class="input_txt2" value="{{ data.news.title }}">
                 </div>
                 <div class="form_group">
-                    <label>新闻分类：</label>
+                    <label>文章分类：</label>
                     <select class="sel_opt" name="category_id">
     {#					<option value="">分类一</option>#}
     {#					<option value="">分类二</option>#}
@@ -37,7 +37,7 @@
                     </select>
                 </div>
                 <div class="form_group">
-                    <label>新闻摘要：</label>
+                    <label>文章摘要：</label>
                     <textarea class="input_multxt" name="digest">{{ data.news.digest }}</textarea>
                 </div>
                 <div class="form_group">
@@ -49,7 +49,7 @@
                     <input type="file" class="input_file" name="index_image">
                 </div>
                 <div class="form_group">
-                    <label>新闻内容：</label>
+                    <label>文章内容：</label>
                     <div class="rich_wrap fl">
                         <input class="input_area" id="rich_content" name="content" value="{{ data.news.content }}"></input>
                     </div>

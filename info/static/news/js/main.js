@@ -146,7 +146,7 @@ $(function(){
         })
     })
 
-    // TODO 注册按钮点击
+    // 注册按钮点击
     $(".register_form_con").submit(function (e) {
         // 阻止默认提交操作
         e.preventDefault()
@@ -155,15 +155,24 @@ $(function(){
         var mobile = $("#register_mobile").val()
         var smscode = $("#smscode").val()
         var password = $("#register_password").val()
+        var imageCode = $("#imagecode").val();
 
 		if (!mobile) {
+            $("#register-mobile-err").html("请填写用户名！");
             $("#register-mobile-err").show();
             return;
         }
-        if (!smscode) {
-            $("#register-sms-code-err").show();
+
+        if (!imageCode) {
+            $("#image-code-err").html("请填写验证码！");
+            $("#image-code-err").show();
+            // $(".get_code").attr("onclick", "sendSMSCode();");
             return;
         }
+        // if (!smscode) {
+        //     $("#register-sms-code-err").show();
+        //     return;
+        // }
         if (!password) {
             $("#register-password-err").html("请填写密码!");
             $("#register-password-err").show();
@@ -178,8 +187,12 @@ $(function(){
 
         var params = {
             'mobile': mobile,
-            'smscode': smscode,
-            'password': password
+            // 'smscode': smscode,
+            'password': password,
+
+            'image_code': imageCode,
+            // 生成图片验证码之后已经对全局变量修改成随机值
+            'image_code_id': imageCodeId,
         }
         // 发起注册请求
         $.ajax({
@@ -203,7 +216,6 @@ $(function(){
                 }
             }
         })
-
 
     })
 })
@@ -239,7 +251,7 @@ function sendSMSCode() {
         return;
     }
 
-    // TODO 发送短信验证码
+    // 发送短信验证码
     var params = {
         'mobile': mobile,
         'image_code': imageCode,
