@@ -119,7 +119,26 @@ def register():
 
     image_code = params_dict.get('image_code')
     image_code_id = params_dict.get('image_code_id')
-    # 判断有值
+
+    # 判断是否手机号用户已经注册
+    try:
+        user = User.query.filter(User.mobile == mobile).first()
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg="用户名查询错误")
+    # 手机号用户已存在
+    if user:
+        return jsonify(errno=RET.NODATA, errmsg="该用户名已注册")
+    # 判断昵称用户是否已经注册
+    try:
+        user = User.query.filter(User.nick_name == mobile).first()
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg="用户名查询错误")
+    if user:
+        return jsonify(errno=RET.NODATA, errmsg="该用户名已注册")
+
+    # 用户名尚未注册,进行校验参数
     if not all([mobile, password]):
         return jsonify(errno=RET.PARAMERR, errmsg='参数错误')
     # if not re.match('1[135678]\\d{9}', mobile):

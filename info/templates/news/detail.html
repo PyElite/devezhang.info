@@ -101,7 +101,7 @@
     {% if data.news.author %}
         <div class="author_card">
             <a href="{{ url_for("profile.other_info") }}?user_id={{ data.news.author.id }}" target="_blank" class="author_pic"><img src="{% if data.news.author.avatar_url %}{{ data.news.author.avatar_url }}
-            {% else %}../../static/news/images/user_pic.png{% endif %}" alt="author_pic"></a>
+            {% else %}../../static/news/images/person06.jpg{% endif %}" alt="author_pic"></a>
             <a href="{{ url_for("profile.other_info") }}?user_id={{ data.news.author.id }}" target="_blank" class="author_name">{{ data.news.author.nick_name }}</a>
             <div class="author_resume">签名：{{ data.news.author.signature }}</div>
             <div class="writings"><span>总篇数</span><b>{{ data.news.author.news_count }}</b></div>

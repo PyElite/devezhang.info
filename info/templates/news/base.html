@@ -38,7 +38,7 @@
             {% if data.user %}
                 <!-- 用户登录后显示下面，隐藏上面 -->
                 <div class="user_login fr">
-                    <img src="{% if data.user.avatar_url %} {{ data.user.avatar_url }} {% else %} ../../static/news/images/person06.jpg{% endif %}" class="lgin_pic">
+                    <a href="/user/info"><img src="{% if data.user.avatar_url %} {{ data.user.avatar_url }} {% else %} ../../static/news/images/person06.jpg{% endif %}" class="lgin_pic"></a>
                     <a href="/user/info" id="nick_name">{{ data.user.nick_name }}</a>
                     {# 添加点击事件 #}
                     <a href="javascript:;" onclick="logout()">退出</a>
@@ -62,7 +62,7 @@
                 {% endblock %}
 
                 <div class="rank_title">
-                    <h3>本站最热</h3>
+                    <h3>文章热度排行</h3>
                 </div>
 
                 <ul class="rank_list">
@@ -92,7 +92,7 @@
                 <span>|</span>
                 <a href="javascript:;">联系我</a>
                 <span>|</span>
-                <a href="javascript:;">友情链接</a>
+                <a href="javascript:;">朋友们</a>
             </div>
             <p class="copyright">Powered by devezhang<br /></p>
         </div>
