@@ -131,6 +131,7 @@ class News(BaseModel, db.Model):
             "create_time": self.create_time.strftime("%Y-%m-%d %H:%M:%S"),
             "index_image_url": self.index_image_url,
             "clicks": self.clicks,
+            "user_id": self.user_id,
         }
         return resp_dict
 

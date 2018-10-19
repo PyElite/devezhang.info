@@ -94,7 +94,7 @@ function updateNewsData() {
                 content += '<a href="/news/'+news.id+'" class="news_title fl">' + news.title + '</a>'
                 content += '<a href="/news/'+news.id+'" class="news_detail fl">' + news.digest + '</a>'
                 content += '<div class="author_info fl">'
-                content += '<div class="source fl">来源：' + news.source + '</div>'
+                content += '<a class="source fl" href="/user/other_info?user_id='+news.user_id + '" target="_blank">来源：' + news.source + '</a>'
                 content += '<div class="time fl">' + news.create_time + '</div>'
                 content += '</div>'
                 content += '</li>'

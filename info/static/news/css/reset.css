@@ -66,7 +66,7 @@ img{
     font-size:14px;
     outline:none;
     color: white;
-    border-radius:15px;
+    border-radius:10px;
 }
 .tab_btns .current{
     background:#f9f9f9;
@@ -95,7 +95,7 @@ img{
     text-overflow:ellipsis;/*文字隐藏以后添加省略号*/
     white-space:nowrap;/*强制不换行*/
     width: 640px;
-    font-size:17px;
+    font-size:15px;
     color:#39f;
     float:left;
 }
