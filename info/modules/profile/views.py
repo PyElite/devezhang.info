@@ -177,7 +177,7 @@ def news_release():
         # POST 提交，执行发布新闻操作
         # 1.获取要提交的数据
         title = request.form.get("title")  # 标题
-        source = "个人发布"
+        source = g.user.nick_name
         digest = request.form.get("digest")
         content = request.form.get("content")
         index_image = request.files.get("index_image")

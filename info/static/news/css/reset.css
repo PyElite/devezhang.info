@@ -79,13 +79,14 @@ img{
     background:#f9f9f9;
     float: left;
     margin-top: 10px;
+    border-radius: 10px;
 }
 
 .tab_cons li{
-    line-height:30px;
+    line-height:1.4em;
     margin:15px 20px;
     overflow:hidden;
-    border-bottom:1px dashed #333;
+    border-bottom: 1px solid #efefef;
 }
 
 .tab_cons a{
@@ -94,9 +95,14 @@ img{
     text-overflow:ellipsis;/*文字隐藏以后添加省略号*/
     white-space:nowrap;/*强制不换行*/
     width: 640px;
-    font-size:14px;
-    color:#333;
+    font-size:17px;
+    color:#39f;
     float:left;
+}
+
+.tab_cons a:hover{
+    color: #dc322f;
+    text-decoration: underline;
 }
 
 .tab_cons span{
