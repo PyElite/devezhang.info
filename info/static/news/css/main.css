@@ -127,7 +127,7 @@ body{
     margin:16px 0 0 16px;
     font-size:20px;
     line-height:22px;
-    color:#000;
+    color: #21d100;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -136,7 +136,8 @@ body{
 
 
 .list_con .news_title:hover{
-    color:#1982d1;
+    color: #0010d1;
+    text-decoration: underline;
 }
 
 .list_con .news_detail{
@@ -213,6 +214,7 @@ body{
     margin-bottom:10px;
     overflow: hidden;
     padding:20px;
+    border-radius: 10px;
 }
 
 .author_pic{
@@ -561,6 +563,8 @@ body{
     overflow:hidden;
     background:#fff;
     border:1px solid #ececee;
+    border-radius: 10px;
+
 }
 
 .detail_con h3{
@@ -952,6 +956,7 @@ body{
     overflow:hidden;
     background:#f9f9f9;
     border:1px solid #ececee;
+    border-radius:10px;
 }
 
 .main_frame{
@@ -970,6 +975,7 @@ body{
     border:1px solid #ececee;
     margin:100px 0 0 50px;
     position:relative;
+    border-radius:10px;
 }
 
 .user_center_pic{
@@ -990,6 +996,7 @@ body{
     text-align:center;
     margin-top:120px;
     font-size:18px;
+    border-radius:10px;
 }
 
 .option_list{
