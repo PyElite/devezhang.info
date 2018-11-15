@@ -31,6 +31,12 @@ $(function(){
         $("#register-password-err").hide();
     });
 
+    //返回顶部
+	$('.totop').click(function(){
+		$('html,body').animate({scrollTop:0},100);
+		return false;
+	});
+
 
 	// 点击输入框，提示文字上移
 	// $('.form_group').on('click focusin',function(){

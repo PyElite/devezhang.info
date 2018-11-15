@@ -1387,3 +1387,48 @@ body{
 .ui-pagination-container .ui-pagination-page-item:hover{
     color:#333;
 }
+
+.sidebar .totop {
+    background: #e1e1e1 url(../images/side4.png) no-repeat center center;
+}
+
+.sidebar .totop:hover {
+    background: #717171 url(../images/side4_1.png) no-repeat center center;
+}
+
+
+/*sidebar*/
+.sidebar {
+    display: block;
+    width: 80px;
+    height: 360px;
+    position: fixed;
+    right: 0;
+    top: 50%;
+    z-index: 99;
+}
+
+.sidebar li {
+    float: left;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #e1e1e1;
+    margin: 5px;
+    cursor: pointer;
+    position: relative;
+}
+
+.sidebar li a {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.sidebar .qq {
+    background: #e1e1e1 url(../images/side1.png) no-repeat center center;
+}
+
+.sidebar .qq:hover {
+    background: #717171 url(../images/side1_1.png) no-repeat center center;
+}
