@@ -62,14 +62,21 @@ img{
     width:100px;
     height:50px;
     border:0px;
-    background:#3367d6;
+    background: #c8c8c8;
     font-size:14px;
+    /*font-weight: 600;*/
     outline:none;
     color: white;
     border-radius:10px;
 }
+
+.tab_btns input:hover{
+    background:#3367d6;
+    color: black;
+}
+
 .tab_btns .current{
-    background:#f9f9f9;
+    background: rgba(22, 93, 255, 0.56);
     color: #333;
 }
 
