@@ -43,30 +43,33 @@ $(function(){
 	// 	$(this).children('.input_tip').animate({'top':-5,'font-size':12},'fast').siblings('input').focus().parent().addClass('hotline');
 	// })
     $('.form_group').on('click',function(){
-        $(this).children('input').focus()
-    })
+        // 点击每个form_group,其中的input标签获得焦点
+        $(this).children('input').focus();
+    });
 
     $('.form_group input').on('focusin',function(){
-        $(this).siblings('.input_tip').animate({'top':-5,'font-size':12},'fast')
+        // form_group中的input标签获取焦点后调用的方法:文字上移&边框蓝色高亮
+        $(this).siblings('.input_tip').stop().animate({'top':-5,'font-size':12},'fast');
         $(this).parent().addClass('hotline');
-    })
+    });
 
 	// 输入框失去焦点，如果输入框为空，则提示文字下移
 	$('.form_group input').on('blur focusout',function(){
+        // form_group中的input标签失去焦点后调用的方法:去除边框高亮&输入为空则提示文字下移
 		$(this).parent().removeClass('hotline');
 		var val = $(this).val();
 		if(val=='')
 		{
-			$(this).siblings('.input_tip').animate({'top':22,'font-size':14},'fast');
+			$(this).siblings('.input_tip').stop().animate({'top':22,'font-size':14},'fast');
 		}
-	})
+	});
 
 
 	// 1、打开注册框，调用generateImageCode()
 	$('.register_btn').click(function(){
 		$('.register_form_con').show();
 		generateImageCode()
-	})
+	});
 
 
 	// 登录框和注册框切换
@@ -107,7 +110,7 @@ $(function(){
 		$(this).find('a')[0].click()
 	})
 
-    // TODO 登录表单提交
+    // 登录表单提交
     $(".login_form_con").submit(function (e) {
         e.preventDefault()
         var mobile = $(".login_form #mobile").val()
